@@ -15,7 +15,7 @@ bool EvolveTowerPanleLayer::init()
 	//ÉèÖÃ×ÖÌå
 	TTFConfig ttfConfig;
 	ttfConfig.fontFilePath = "fonts/msyhbd.ttf";
-	ttfConfig.fontSize = 10;
+	ttfConfig.fontSize = 15;
 	ttfConfig.distanceFieldEnabled = false;
 	ttfConfig.outlineSize = 0;
 	ttfConfig.glyphs = GlyphCollection::DYNAMIC;
@@ -28,7 +28,7 @@ bool EvolveTowerPanleLayer::init()
 	this->addChild(sprite);
 
 
-	sprite1 = Sprite::create("up.png");
+	sprite1 = Sprite::createWithSpriteFrameName("up.png");
 	sprite1->setAnchorPoint(Point(0.5f, 0));
 	sprite1->setPosition(Point(-sprite->getContentSize().width , sprite->getContentSize().height / 2));
 	this->addChild(sprite1);
@@ -41,7 +41,7 @@ bool EvolveTowerPanleLayer::init()
 	this->addChild(evolve1MoneyLabel);
 
 
-	sprite2 = Sprite::create("up.png");
+	sprite2 = Sprite::createWithSpriteFrameName("up.png");
 	sprite2->setAnchorPoint(Point(0.5f, 0));
 	sprite2->setPosition(Point(sprite->getContentSize().width, sprite->getContentSize().height / 2));
 	this->addChild(sprite2);
@@ -54,7 +54,7 @@ bool EvolveTowerPanleLayer::init()
 	this->addChild(evolve2MoneyLabel);
 
 
-	sprite3 = Sprite::create("sell.png");
+	sprite3 = Sprite::createWithSpriteFrameName("sell.png");
 	//sprite2 = Sprite::createWithSpriteFrameName("sell.png");
 	sprite3->setAnchorPoint(Point(0.5f, 1));
 	sprite3->setPosition(Point(0 , -sprite->getContentSize().height / 2));

@@ -21,7 +21,7 @@ bool Thief::init()
 	AnimationCache::getInstance()->addAnimation(animationFront, "runfront1");
 	animationBack = createAnimation("wolfBack3", 3, 0.1f);
 	AnimationCache::getInstance()->addAnimation(animationBack, "runback1");
-	animationExplode = createAnimation("explode1", 2, 0.15f);
+	animationExplode = createAnimation("death1", 3, 0.15f);
 	AnimationCache::getInstance()->addAnimation(animationExplode, "explode1");
 
 	createAndSetHpBar();
@@ -198,7 +198,7 @@ void Pirate::enemyExpload()
 	sprite->stopAllActions();
 	unschedule(schedule_selector(Pirate::changeDirection));
 	sprite->setAnchorPoint(Point(0.5f, 0.25f));
-	sprite->runAction(Sequence::create(Animate::create(AnimationCache::getInstance()->getAnimation("explode2"))
+	sprite->runAction(Sequence::create(Animate::create(AnimationCache::getInstance()->getAnimation("explode1"))
 		, DelayTime::create(0.5f)
 		, CallFuncN::create(CC_CALLBACK_0(EnemyBase::removeFromParent, this))
 		, NULL));
@@ -294,7 +294,7 @@ void Bandit::enemyExpload()
 	sprite->stopAllActions();
 	unschedule(schedule_selector(Bandit::changeDirection));
 	sprite->setAnchorPoint(Point(0.5f, 0.25f));
-	sprite->runAction(Sequence::create(Animate::create(AnimationCache::getInstance()->getAnimation("explode3"))
+	sprite->runAction(Sequence::create(Animate::create(AnimationCache::getInstance()->getAnimation("explode1"))
 		, DelayTime::create(0.5f)
 		, CallFuncN::create(CC_CALLBACK_0(EnemyBase::removeFromParent, this))
 		, NULL));

@@ -1,3 +1,6 @@
+#ifndef __SheepVillageDefense__Tower__
+#define __SheepVillageDefense__Tower__
+
 #include <string>
 using namespace std;
 
@@ -90,3 +93,5 @@ private:
 	string evolution;		//防御塔进化方向
 	string towerInfo;		//防御塔说明
 };
+
+#endif /* defined(__thiefTD__Tower__) */

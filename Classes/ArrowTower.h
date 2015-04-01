@@ -22,6 +22,7 @@ public:
 	bool sellTower();//出售防御塔
 	bool evolve1Tower();//防御塔进化1
 	bool evolve2Tower();//防御塔进化2
+	void updateShootTime();//更新射击定时器
     
 private:
     Sprite* tower;//塔精灵

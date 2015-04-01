@@ -6,7 +6,7 @@ using namespace CocosDenshion;
 
 LoadingResScene::LoadingResScene()
 :numberOfLoadedRes(0)
-,totalOfLoadedRes(26)
+,totalOfLoadedRes(23)
 ,progressBar(NULL)
 {
 }
@@ -78,12 +78,15 @@ void LoadingResScene::loadResources()
 	//SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Tower.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("HP.plist");
 	//SpriteFrameCache::getInstance()->addSpriteFramesWithFile("ToolLayer.plist");
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bullet.plist");
+	//SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bullet.plist");
 	//SpriteFrameCache::getInstance()->addSpriteFramesWithFile("arrow.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("bigTower.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Twister.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("fireBallExplode.plist");
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("fireBall.plist");
+
+	SimpleAudioEngine::getInstance()->preloadEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str());
+	SimpleAudioEngine::getInstance()->preloadEffect(FileUtils::getInstance()->fullPathForFilename("sound/bulid.wav").c_str());
     numberOfLoadedRes++;
 
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Playdl.plist");
@@ -103,9 +106,6 @@ void LoadingResScene::loadResources()
     Director::getInstance()->getTextureCache()->addImageAsync("selectLevelBg2.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
     Director::getInstance()->getTextureCache()->addImageAsync("start_1.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
 	Director::getInstance()->getTextureCache()->addImageAsync("start_2.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
-	Director::getInstance()->getTextureCache()->addImageAsync("sell.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
-	Director::getInstance()->getTextureCache()->addImageAsync("up.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
-	Director::getInstance()->getTextureCache()->addImageAsync("yuan.png", CC_CALLBACK_1(LoadingResScene::loadingCallBack, this));
 }
 
 void LoadingResScene::loadingCallBack(cocos2d::Texture2D *texture)

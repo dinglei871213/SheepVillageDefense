@@ -1,5 +1,5 @@
 #include "TowerBase.h"
-#include "GameManager.h"
+//#include "GameManager.h"
 
 TowerBase::TowerBase()
 :scope(0)
@@ -10,7 +10,7 @@ TowerBase::TowerBase()
 ,towerLevel(1)
 ,towerUpValue(0)
 ,towerSellValue(0)
-,towerMaxLevel(3)
+,towerMaxLevel(4)
 ,shootTime(0.8)
 ,towerEvolve1Value(0)
 , towerEvolve2Value(0)
@@ -31,10 +31,8 @@ bool TowerBase::init()
 }
 
 //检测离羊村最近的敌人
-void TowerBase::checkNearestEnemy()
+void TowerBase::checkNearestEnemy(Vector<EnemyBase*> enemyVector)
 {
-    GameManager *instance = GameManager::getInstance();
-    auto enemyVector = instance->enemyVector;
 	auto pointCounter = 0;
 	auto currMinDistant = this->scope;
 
@@ -67,6 +65,16 @@ void TowerBase::checkNearestEnemy()
     nearestEnemy = enemyTemp;
 }
 
+
+
+void TowerBase::setTowerInfo(Tower tower)
+{
+	scope = tower.getAttackRange();
+	shootTime = tower.getAttackSpeed();
+	towerValue = tower.getCost();
+	lethality = tower.getDamage();
+	towerSellValue = towerValue / 2;
+}
 
 
 

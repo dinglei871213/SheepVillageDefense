@@ -28,6 +28,8 @@ public:
 	void onTouchEnded(Touch* touch, Event* event);
     
     CC_SYNTHESIZE(TowerType, chooseTowerType, ChooseTowerType);// 选择的炮塔类型
+
+	void setMoneyText(int tower1Money, int tower2Money, int tower3Money, int tower4Money);
     
 private:
     
@@ -35,6 +37,11 @@ private:
 	Sprite* sprite2;
 	Sprite* sprite3;
 	Sprite* sprite4;
+
+	Label * tower1MoneyLabel;
+	Label * tower2MoneyLabel;
+	Label * tower3MoneyLabel;
+	Label * tower4MoneyLabel;
 };
 
 

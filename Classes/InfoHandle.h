@@ -1,3 +1,5 @@
+#ifndef __SheepVillageDefense__InfoHandle__
+#define __SheepVillageDefense__InfoHandle__
 
 #include "User.h"
 #include "Wolf.h"
@@ -35,3 +37,4 @@ public:
 	//void writeTowerInfo(Tower tower);
 	//void writeSkillInfo(Skill skill);
 };
+#endif /* defined(__SheepVillageDefense__InfoHandle__) */

@@ -3,7 +3,10 @@
 #include <iostream>
 #include "cocos2d.h"
 #include "EnemyBase.h"
-#include "Bullet.h"
+#include "BulletBase.h"
+#include "Tower.h"
+//#include "InfoHandle.h"
+using namespace std;
 USING_NS_CC;
 class TowerBase : public Sprite
 {
@@ -13,7 +16,7 @@ public:
 	virtual bool init();
 	CREATE_FUNC(TowerBase);
 
-	void checkNearestEnemy();
+	void checkNearestEnemy(Vector<EnemyBase*> enemyVector);
 
 	CC_SYNTHESIZE(int, scope, Scope);  // 塔的视线范围
 	CC_SYNTHESIZE(int, lethality, Lethality);   // 杀伤力
@@ -35,6 +38,8 @@ public:
 	virtual bool sellTower(){ return true; }
 	virtual bool evolve1Tower(){ return true; }
 	virtual bool evolve2Tower(){ return true; }
+	virtual void updateShootTime(){ };
+	void setTowerInfo(Tower tower);
 protected:
 	EnemyBase* nearestEnemy;    // 塔子视野内离羊村最近的敌人
 };

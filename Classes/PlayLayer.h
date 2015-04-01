@@ -14,6 +14,7 @@
 #include "TowerPanleLayer.h"
 #include "GameManager.h"
 #include "EvolveTowerPanelLayer.h"
+#include "Tower.h"
 
 USING_NS_CC;
 class PlayLayer : public Layer
@@ -48,7 +49,8 @@ public:
 	void checkBullet();
 	void addEvolveTowerChoosePanel(Point point, TowerBase* tower);
 
-	
+
+	void startGame();
 	int MatrixIndex;
 	//Vector<TMXObjectGroup*> mapobject[5];
 	//Vector<ValueMap> valobject[5];
@@ -133,6 +135,9 @@ private:
 	Sprite* speedBtn;
 	bool isSpeeding;
 	Sprite *settingBtn;
+
+	Sprite* startBtn;
+	bool isStart;
 };
 
 #endif /* defined(__thiefTD__PlayLayer__) */

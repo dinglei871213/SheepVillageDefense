@@ -40,8 +40,10 @@ void AttackTower::shoot(float dt)
 {
     GameManager *instance = GameManager::getInstance();
     auto bulletVector = instance->bulletVector;
-    
-    checkNearestEnemy();
+
+	auto enemyVector = instance->enemyVector;
+	//检测炮塔视线范围内距离羊村最近的敌人。
+	checkNearestEnemy(enemyVector);
     if(nearestEnemy!=NULL && nearestEnemy->getCurrHp() > 0 )
     {
         auto currBullet = AttackTowerBullet();

@@ -8,6 +8,7 @@
 #include "TowerBase.h"
 #include "GroupEnemy.h"
 #include "BulletBase.h"
+#include "InfoHandle.h"
 
 
 USING_NS_CC;
@@ -36,6 +37,11 @@ public:
 	void clear();
     
 	static GameManager* getInstance();
+	void setTowerInfo();
+
+
+	Tower towerInfo[8];
+	Wolf wolfInfo[8];
     
 private:
 	static GameManager * instance;

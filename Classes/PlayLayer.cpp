@@ -1,6 +1,6 @@
 
-#define MAP_WIDTH (30)
-#define MAP_HEIGHT (20)
+#define MAP_WIDTH (15)
+#define MAP_HEIGHT (10)
 
 #include "PlayLayer.h"
 #include "GameManager.h"
@@ -129,8 +129,14 @@ bool PlayLayer::init()
 
 	offX = ( map->getContentSize().width - winSize.width )/ 2;
 	initPointsVector(offX);
-	schedule(schedule_selector(PlayLayer::logic), 2.0f);
-	schedule(schedule_selector(PlayLayer::skillsCool), 0.2f);
+
+	startBtn = Sprite::create();
+	startBtn->setScale(0.4);
+	startBtn->setSpriteFrame("playbutton1.png");
+	startBtn->setPosition(Point(winSize.width * 1 / 20, winSize.height * 24 / 25));
+	this->addChild(startBtn);
+	isStart = false;
+
 
 
 	auto touchListener = EventListenerTouchOneByOne::create();
@@ -149,6 +155,8 @@ bool PlayLayer::init()
 		}
 	}
 	setTouchEnabled(true);
+
+	instance->setTowerInfo();
 	return true;
 }
 
@@ -757,6 +765,19 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 	Point reallyPoint06 = settingBtn->getParent()->convertToNodeSpace(location);
 	Rect rect06 = settingBtn->getBoundingBox();
 
+	if (!isStart)
+	{ 
+	Point reallyPoint07 = startBtn->getParent()->convertToNodeSpace(location);
+	Rect rect07 = startBtn->getBoundingBox();
+
+	if (rect07.containsPoint(reallyPoint07) )
+	{
+		startGame();
+		return true;
+	}
+	}
+
+
 	if (rect06.containsPoint(reallyPoint06))
 	{
 		clickSetting();
@@ -895,8 +916,13 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 void PlayLayer::addTowerChoosePanel(Point point)
 {
 	chooseTowerpanel = TowerPanleLayer::create();
+	auto towerValue1 = instance->towerInfo[0].getCost();
+	auto towerValue2 = instance->towerInfo[2].getCost();
+	auto towerValue3 = instance->towerInfo[1].getCost();
+	auto towerValue4 = instance->towerInfo[3].getCost();
+	chooseTowerpanel->setMoneyText(towerValue1, towerValue2, towerValue3, towerValue4);
 	chooseTowerpanel->setPosition(point);
-	this->addChild(chooseTowerpanel,30);
+	this->addChild(chooseTowerpanel,60);
 }
 
 Point PlayLayer::convertTotileCoord(Point position)
@@ -981,41 +1007,58 @@ void PlayLayer::addTower()
 		int MatrixIndex = static_cast<int>( matrixCoord.y * MAP_WIDTH + matrixCoord.x );
 		bool noMoneyTips = false;
 		TowerBase* tower = NULL;
+		int towerValue=0;
 		if( type == TowerType::ARROW_TOWER )
 		{
-			if( money >= 200 )
+			towerValue =instance->towerInfo[0].getCost();
+			if (money >= towerValue)
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/build.wav").c_str(), false);
 				tower = ArrowTower::create();
-				money -= 200;
+				tower->setTowerInfo(instance->towerInfo[0]);
+				tower->updateShootTime();
+				money -= towerValue;
 			}
 			else
 				noMoneyTips = true;
 		}
 		else if( type == TowerType::SLOW_TOWER )
 		{
-			if( money >= 150 )
+			towerValue = instance->towerInfo[1].getCost();
+			if (money >= towerValue)
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/build.wav").c_str(), false);
 				tower = SlowTower::create();
-				money -= 150;
+				tower->setTowerInfo(instance->towerInfo[1]);
+				tower->updateShootTime();
+				money -= towerValue;
 			}
 			else
 				noMoneyTips = true;
 		}
 		else if( type == TowerType::POISON_TOWER )
 		{
-			if( money >= 500 )
+			towerValue = instance->towerInfo[2].getCost();
+			if (money >= towerValue)
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/build.wav").c_str(), false);
 				tower = PoisonTower::create();
-				money -= 500;
+				tower->setTowerInfo(instance->towerInfo[2]);
+				tower->updateShootTime();
+				money -= towerValue;
 			}else
 				noMoneyTips = true;
 		}
 		else if (type == TowerType::CANNON_TOWER)
 		{
-			if (money >= 500)
+			towerValue = instance->towerInfo[3].getCost();
+			if (money >= towerValue)
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/build.wav").c_str(), false);
 				tower = CannonTower::create();
-				money -= 500;
+				tower->setTowerInfo(instance->towerInfo[3]);
+				tower->updateShootTime();
+				money -= towerValue;
 			}
 			else
 				noMoneyTips = true;
@@ -1083,10 +1126,11 @@ void PlayLayer::CollisionDetection()
 				bulletNeedToDelete.pushBack(bullet);
 				if (bullet->getBombRange() > 0)
 				{
-					for (int m = 0; j < enemyVector.size(); j++)
+					for (int m = 0; m < enemyVector.size(); m++)
 					{
-						auto enemyToBomb = instance->enemyVector.at(i);
-						auto distanceFromBomb = bullet->getPosition().getDistance(enemyToBomb->getPosition());
+						auto enemyToBomb = instance->enemyVector.at(m);
+						auto pointBomb = bullet->getPosition() + bullet->getParent()->getPosition();
+						auto distanceFromBomb = pointBomb.getDistance(enemyToBomb->sprite->getPosition());
 						if (distanceFromBomb <= bullet->getBombRange())
 						{
 							enemyToBomb->enemyReduceHp(bullet->getBombHp());
@@ -1096,6 +1140,7 @@ void PlayLayer::CollisionDetection()
 					}
 
 				}
+				break;
 			}
 		}
 	}
@@ -1206,7 +1251,7 @@ void PlayLayer::addUpTowerChoosePanel(Point point, TowerBase* tower)
 	upTowerPanleLayer->setPosition(point);
 	auto scope = tower->getScope();
 	auto upScopeCircle = scope + 30;
-	this->addChild(upTowerPanleLayer);
+	this->addChild(upTowerPanleLayer,60);
 	upTowerPanleLayer->setScopeCircle(scope);
 	upTowerPanleLayer->setUpScopeCircle(upScopeCircle);
 }
@@ -1230,6 +1275,7 @@ void PlayLayer::upOrSellTower()
 		{
 			if (money >= upValue && towerMatrix[MatrixIndex]->getTowerLevel() < towerMatrix[MatrixIndex]->getTowerMaxLevel())
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->upTower();
 				money -= upValue;
 				auto moneyText = std::to_string(money);
@@ -1292,7 +1338,7 @@ void PlayLayer::addEvolveTowerChoosePanel(Point point, TowerBase* tower)
 	evolveTowerPanleLayer->setMoneyText(tower->getTowerEvolve1Value(), tower->getTowerEvolve2Value(), tower->getTowerSellValue());
 	evolveTowerPanleLayer->setPosition(point);
 	auto scope = tower->getScope();
-	this->addChild(evolveTowerPanleLayer);
+	this->addChild(evolveTowerPanleLayer,60);
 	evolveTowerPanleLayer->setScopeCircle(scope);
 }
 
@@ -1316,6 +1362,7 @@ void PlayLayer::evolveOrSellTower()
 			int evolve1Value = towerMatrix[MatrixIndex]->getTowerEvolve1Value();
 			if (money >= evolve1Value && towerMatrix[MatrixIndex]->getTowerEvolve1Level() < towerMatrix[MatrixIndex]->getTowerMaxEvolveLevel())
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->evolve1Tower();
 				money -= evolve1Value;
 				auto moneyText = std::to_string(money);
@@ -1338,6 +1385,7 @@ void PlayLayer::evolveOrSellTower()
 			int evolve2Value = towerMatrix[MatrixIndex]->getTowerEvolve2Value();
 			if (money >= evolve2Value && towerMatrix[MatrixIndex]->getTowerEvolve2Level() < towerMatrix[MatrixIndex]->getTowerMaxEvolveLevel())
 			{
+				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->evolve2Tower();
 				money -= evolve2Value;
 				auto moneyText = std::to_string(money);
@@ -1399,4 +1447,13 @@ void PlayLayer::checkBullet(){
 	bulletNeedToDelete.clear();
 }
 
+
+void PlayLayer::startGame()
+{
+
+	schedule(schedule_selector(PlayLayer::logic), 2.0f);
+	schedule(schedule_selector(PlayLayer::skillsCool), 0.2f);
+	isStart = true;
+	startBtn->removeFromParent();
+}
 

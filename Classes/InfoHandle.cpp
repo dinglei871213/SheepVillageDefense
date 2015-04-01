@@ -156,13 +156,14 @@ Tower InfoHandle::getTowerInfo(string towerName){
 	{
 		result = true;
 		rapidjson::Value&object = d[towerName.c_str()];
-		tower.setTowerName(object["towerName"].GetString());
+		//tower.setTowerName(object["towerName"].GetString());
 		tower.setTowerInfo(object["towerInfo"].GetString());
 		tower.setTowerType(object["towerType"].GetString());
 		tower.setTowerLevel(object["towerLevel"].GetInt());
 		tower.setDamage(object["damage"].GetDouble());
 		tower.setAttackSpeed(object["attackSpeed"].GetDouble());
 		tower.setAttackRange(object["attackRange"].GetDouble());
+		tower.setCost(object["cost"].GetInt());
 		tower.setEvolution(object["evolution"].GetString());
 		
 	}

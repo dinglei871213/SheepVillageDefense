@@ -52,9 +52,9 @@ void SlowTower::shoot(float dt)
 {
 	GameManager *instance = GameManager::getInstance();
 	auto bulletVector = instance->bulletVector;
-
+	auto enemyVector = instance->enemyVector;
 	//检测炮塔视线范围内距离羊村最近的敌人。
-	checkNearestEnemy();
+	checkNearestEnemy(enemyVector);
 	//最近敌人存在，生命值不为0，则创建子弹，射向离羊村最近的敌人
 	//计算子弹的执行MoveTo动作的两个参数
 	if (nearestEnemy != NULL && nearestEnemy->getCurrHp() > 0)
@@ -105,9 +105,10 @@ bool SlowTower::upTower()
 	scope = scope + 30;
 	lethality = lethality + 1;
 	//修改升级金钱和出售金钱
+	towerSellValue += towerUpValue / 2;
 	towerUpValue += 50;
-	towerSellValue += 25;
-
+	towerEvolve1Value = towerUpValue;
+	towerEvolve2Value = towerUpValue;
 
 	return true;
 
@@ -143,11 +144,20 @@ bool SlowTower::sellTower()
 bool SlowTower::evolve1Tower()
 {
 	towerEvolve1Level++;
+	if (towerEvolve1Level <= 2)
+	{
+		char buffer[20] = { 0 };
+		sprintf(buffer, "_%i.png", towerEvolve1Level + 4);
+		std::string str1 = "tower3";
+		std::string str = str1 + buffer;
+		SpriteFrame* frame = SpriteFrameCache::getInstance()->getSpriteFrameByName(str);
+		tower->setSpriteFrame(frame);//更换防御塔图片
+	}
 	//属性增加
 	towerSlowSpeed += 1;
 	//修改升级金钱和出售金钱
-	towerEvolve1Value += 0;
-	towerSellValue += 50;
+	towerSellValue += towerEvolve1Value / 2;
+	towerEvolve1Value += 50;
 	return true;
 }
 bool SlowTower::evolve2Tower()
@@ -156,8 +166,13 @@ bool SlowTower::evolve2Tower()
 	//属性增加
 	towerSlowSpeedTime += 2;
 	//修改升级金钱和出售金钱
-	towerEvolve2Value += 0;
-	towerSellValue += 50;
+	towerSellValue += towerEvolve2Value / 2;
+	towerEvolve2Value += 50;
 	return true;
 }
 
+void SlowTower::updateShootTime()
+{
+	unschedule(schedule_selector(SlowTower::shoot));
+	schedule(schedule_selector(SlowTower::shoot), shootTime);
+}
