@@ -33,7 +33,7 @@ void BulletBase::followEnemy(float dt)
 			auto point2 = this->getParent()->getPosition();
 			auto point3 = this->getPosition();
 
-			Point shootVector = targetEnemy->sprite->getPosition() - this->getParent()->getPosition();
+			Point shootVector = targetEnemy->sprite->getPosition() + Point(0, targetEnemy->sprite->getContentSize().height/2) - this->getParent()->getPosition();
 			shootVector.normalize();
 			Point normalizedShootVector = -shootVector;
 			//最终位置 ＝ 起始位置 － 单位向量 * 射程长度

@@ -1117,7 +1117,7 @@ void PlayLayer::CollisionDetection()
 			auto enemy = enemyVector.at(j);
 			//auto enemyRect = enemy->sprite->getBoundingBox();
 			auto enemyRect = Rect(enemy->sprite->getPositionX() - enemy->sprite->getContentSize().width / 2,
-				enemy->sprite->getPositionY() - enemy->sprite->getContentSize().height / 2,
+				enemy->sprite->getPositionY(),
 				enemy->sprite->getContentSize().width,
 				enemy->sprite->getContentSize().height);
 			if (bulletRect.intersectsRect(enemyRect))
