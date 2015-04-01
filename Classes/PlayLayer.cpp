@@ -77,6 +77,7 @@ bool PlayLayer::init()
 
 	Size winSize = Director::getInstance()->getWinSize();
 	instance = GameManager::getInstance();
+	instance->setTowerInfo();
 
 	auto gameBg = Sprite::create(instance->getCurBgName());
 	gameBg->setPosition (Point(winSize.width / 2 ,winSize.height / 2));
@@ -106,21 +107,18 @@ bool PlayLayer::init()
 	this->addChild(map, -10);
 
 	pauseBtn = Sprite::create();
-	pauseBtn->setScale(0.4);
-	pauseBtn->setSpriteFrame("playbutton1.png");
-	pauseBtn->setPosition(Point(winSize.width * 9 / 10, winSize.height * 24 / 25));
+	pauseBtn->setTexture("anniu20.png");
+	pauseBtn->setPosition(Point(winSize.width * 8 / 9 - 20, winSize.height * 24 / 25));
 	this->addChild(pauseBtn);
 
 	speedBtn = Sprite::create();
-	speedBtn->setScale(0.4);
-	speedBtn->setSpriteFrame("playbutton1.png");
-	speedBtn->setPosition(Point(winSize.width * 14 / 15, winSize.height * 24 / 25));
+	speedBtn->setTexture("anniu23.png");
+	speedBtn->setPosition(Point(winSize.width * 8 / 9 + 30, winSize.height * 24 / 25));
 	this->addChild(speedBtn);
 
 	settingBtn = Sprite::create();
-	settingBtn->setScale(0.4);
-	settingBtn->setSpriteFrame("playbutton1.png");
-	settingBtn->setPosition(Point(winSize.width * 37 / 38, winSize.height * 24 / 25));
+	settingBtn->setTexture("anniu22.png");
+	settingBtn->setPosition(Point(winSize.width * 8 / 9 + 80, winSize.height * 24 / 25));
 	this->addChild(settingBtn);
 
 
@@ -129,14 +127,13 @@ bool PlayLayer::init()
 
 	offX = ( map->getContentSize().width - winSize.width )/ 2;
 	initPointsVector(offX);
-
+	
 	startBtn = Sprite::create();
 	startBtn->setScale(0.4);
-	startBtn->setSpriteFrame("playbutton1.png");
+	startBtn->setTexture("anniu19.png");
 	startBtn->setPosition(Point(winSize.width * 1 / 20, winSize.height * 24 / 25));
 	this->addChild(startBtn);
 	isStart = false;
-
 
 
 	auto touchListener = EventListenerTouchOneByOne::create();
@@ -155,8 +152,6 @@ bool PlayLayer::init()
 		}
 	}
 	setTouchEnabled(true);
-
-	instance->setTowerInfo();
 	return true;
 }
 
@@ -183,6 +178,7 @@ void PlayLayer::doPause()
 
 void PlayLayer::skill01Logic(float dt)
 {
+	InfoHandle handle;
 	Vector<EnemyBase*> enemyNeedToDelete;
 	int currentEnemyNum=instance->enemyVector.size();
 	for(int i=0;i<currentEnemyNum;i++){
@@ -205,7 +201,7 @@ void PlayLayer::skill01Logic(float dt)
 			enemyNeedToDelete.pushBack(currentEnemy);
 			auto valueMoney = currentEnemy->getVaule();
 			money += valueMoney;
-			auto moneyText = std::to_string(money);
+			auto moneyText = handle.intostr(money);
 			moneyLabel->setString(moneyText);
 		}
 	}
@@ -254,6 +250,7 @@ void PlayLayer::moveToOriginPoint(float dt)
 
 void PlayLayer::fireBallExplodeLogic(float dt)
 {
+	InfoHandle handle;
 	fireBallExplodeRect = Rect(fireBallExplodeSprite->getPositionX() +fireBallExplodeSprite->getParent()->getPositionX() - fireBallExplodeSprite->getContentSize().width / 2-20,
 		fireBallExplodeSprite->getPositionY() +fireBallExplodeSprite->getParent()->getPositionY() - fireBallExplodeSprite->getContentSize().height / 2-20,
 		fireBallExplodeSprite->getContentSize().width+20,
@@ -288,7 +285,7 @@ void PlayLayer::fireBallExplodeLogic(float dt)
 				enemyNeedToDelete.pushBack(enemy);
 				auto valueMoney = enemy->getVaule();
 				money += valueMoney;
-				auto moneyText = std::to_string(money);
+				auto moneyText = handle.intostr(money);
 				moneyLabel->setString(moneyText);
 			}
 		}
@@ -376,12 +373,13 @@ void PlayLayer::skill03Release(Point point)
 
 void PlayLayer::initPointsVector(float offX)
 {
+	InfoHandle handle;
 	if (roteNum ==1)
 	{
 		Node *runOfPoint = NULL;
 		int count = 0;
 		ValueMap point;
-		point = objects->getObject(std::to_string(count));
+		point = objects->getObject(handle.intostr(count));
 		while (point.begin() != point.end())
 		{
 			float x = point.at("x").asFloat();
@@ -390,7 +388,7 @@ void PlayLayer::initPointsVector(float offX)
 			runOfPoint->setPosition(Point(x - offX, y));
 			this->pointsVector.pushBack(runOfPoint);
 			count++;
-			point = objects->getObject(std::to_string(count));
+			point = objects->getObject(handle.intostr(count));
 		}
 		runOfPoint = NULL;
 	}
@@ -399,7 +397,7 @@ void PlayLayer::initPointsVector(float offX)
 		Node *runOfPoint01 = NULL;
 		int count01 = 0;
 		ValueMap point01;
-		point01 = objects01->getObject(std::to_string(count01));
+		point01 = objects01->getObject(handle.intostr(count01));
 		while (point01.begin() != point01.end())
 		{
 			float x = point01.at("x").asFloat();
@@ -408,14 +406,14 @@ void PlayLayer::initPointsVector(float offX)
 			runOfPoint01->setPosition(Point(x - offX, y));
 			this->pointsVector01.pushBack(runOfPoint01);
 			count01++;
-			point01 = objects01->getObject(std::to_string(count01));
+			point01 = objects01->getObject(handle.intostr(count01));
 		}
 		runOfPoint01 = NULL;
 
 		Node *runOfPoint02 = NULL;
 		int count02 = 0;
 		ValueMap point02;
-		point02 = objects02->getObject(std::to_string(count02));
+		point02 = objects02->getObject(handle.intostr(count02));
 		while (point02.begin() != point02.end())
 		{
 			float x = point02.at("x").asFloat();
@@ -424,7 +422,7 @@ void PlayLayer::initPointsVector(float offX)
 			runOfPoint02->setPosition(Point(x - offX, y));
 			this->pointsVector02.pushBack(runOfPoint02);
 			count02++;
-			point02 = objects02->getObject(std::to_string(count02));
+			point02 = objects02->getObject(handle.intostr(count02));
 		}
 		runOfPoint02 = NULL;
 	}
@@ -440,89 +438,95 @@ void PlayLayer::initToolLayer()
 	//toolLayer->setScale(1.0f/2.0f);
 	//Size winSize = Director::getInstance()->getWinSize();
 	//toolLayer->setContentSize(winSize/2);
-	addChild(toolLayer,40);
+	addChild(toolLayer, 40);
 
-	auto spritetool = Sprite::createWithSpriteFrameName("toolbg.png");
-	spritetool->setScale(0.4);
+	//auto spritetool = Sprite::createWithSpriteFrameName("toolbg.png");
+	auto spritetool = Sprite::create();
+	spritetool->setTexture("toolBg.png");
+	//spritetool->setScale(0.4);
 	spritetool->setAnchorPoint(Point(0.5f, 1));
-	spritetool->setPosition (Point(size.width /2, size.height));
+	spritetool->setPosition(Point(size.width / 2, size.height));
 	toolLayer->addChild(spritetool);
 
 	//
 	money = instance->getMoney();
 	moneyLabel = Label::createWithBMFont("fonts/bitmapFontChinese.fnt", " ");
-	moneyLabel->setPosition(Point(spritetool->getContentSize().width / 8, spritetool->getContentSize().height / 2));
+	moneyLabel->setScale(0.5);
+	moneyLabel->setPosition(Point(spritetool->getContentSize().width / 8, spritetool->getContentSize().height / 2 - 2));
 	moneyLabel->setAnchorPoint(Point(0, 0.5f));
 	auto moneyText = std::to_string(money);
 	moneyLabel->setString(moneyText);
 	spritetool->addChild(moneyLabel);
 
 	//
-	playHpBar = ProgressTimer::create(Sprite::createWithSpriteFrameName("playhp.png"));
+	auto hpSprite = Sprite::create();
+	hpSprite->setTexture("playHp.png");
+	//playHpBar = ProgressTimer::create(Sprite::createWithSpriteFrameName("playhp.png"));
+	playHpBar = ProgressTimer::create(hpSprite);
 	playHpBar->setType(ProgressTimer::Type::BAR);
 	playHpBar->setMidpoint(Point(0, 0.4f));
 	playHpBar->setBarChangeRate(Point(1, 0));
 	playHpBar->setPercentage(playHpPercentage);
-	playHpBar->setPosition(Point(spritetool->getContentSize().width / 5 *4  , spritetool->getContentSize().height / 2));
+	playHpBar->setPosition(Point(spritetool->getContentSize().width / 5 * 4 - 14, spritetool->getContentSize().height / 2 - 7.5));
 	spritetool->addChild(playHpBar);
 
-	auto star = Sprite::createWithSpriteFrameName("playstar.png");
-	star->setPosition(Point(spritetool->getContentSize().width / 5 *4 , spritetool->getContentSize().height / 2));
+	//auto star = Sprite::createWithSpriteFrameName("playstar.png");
+	auto star = Sprite::create();
+	star->setTexture("playStar.png");
+	star->setPosition(Point(spritetool->getContentSize().width / 5 * 4, spritetool->getContentSize().height / 2));
 	spritetool->addChild(star);
 
 	//
 	int groupTotal = instance->getGroupNum();
 	groupLabel = Label::createWithBMFont("fonts/bitmapFontChinese.fnt", " ");
-	groupLabel->setPosition(Point(spritetool->getContentSize().width / 8 * 3, spritetool->getContentSize().height / 2 ));
-	groupLabel->setAnchorPoint(Point(0.5f , 0.5f));
+	groupLabel->setScale(0.5);
+	groupLabel->setPosition(Point(spritetool->getContentSize().width / 8 * 3 + 6, spritetool->getContentSize().height / 2 - 2));
+	groupLabel->setAnchorPoint(Point(0.5f, 0.5f));
 	auto groupInfoText = std::to_string(groupCounter + 1);
 	groupLabel->setString(groupInfoText);
 	spritetool->addChild(groupLabel);
 
 	groupTotalLabel = Label::createWithBMFont("fonts/bitmapFontChinese.fnt", " ");
-	groupTotalLabel->setPosition(Point(spritetool->getContentSize().width / 2 , spritetool->getContentSize().height / 2 ));
-	groupTotalLabel->setAnchorPoint(Point(0.5f , 0.5f));
+	groupTotalLabel->setScale(0.5);
+	groupTotalLabel->setPosition(Point(spritetool->getContentSize().width / 2 + 6, spritetool->getContentSize().height / 2 - 2));
+	groupTotalLabel->setAnchorPoint(Point(0.5f, 0.5f));
 	auto groupTotalText = std::to_string(groupTotal);
 	groupTotalLabel->setString(groupTotalText);
 	spritetool->addChild(groupTotalLabel);
-
-	// back
-	Sprite *backItem1 = CCSprite::createWithSpriteFrameName("playbutton1.png");
-	Sprite *backItem2 = CCSprite::createWithSpriteFrameName("playbutton2.png");
-	//String s="sdgfgf";
-	MenuItemSprite *pPauseItem = MenuItemSprite::create(backItem1, backItem2, CC_CALLBACK_1(PlayLayer::menuBackCallback, this));
-	pPauseItem->setPosition(Point(spritetool->getContentSize().width - backItem1->getContentSize().width/2, spritetool->getContentSize().height / 2));
-	pPauseItem->setAnchorPoint(Point(0, 0.4f));
-	Menu* pMenu = Menu::create(pPauseItem, NULL);
-	pMenu->setPosition(Point::ZERO);
-	spritetool->addChild(pMenu);
-
 }
 
 void PlayLayer::initSkillsLayer()
 {
-	skillsLayer=Layer::create();
-	addChild(skillsLayer,40);
+	skillsLayer = Layer::create();
+	addChild(skillsLayer, 40);
 
-	skillsSprite=Sprite::createWithSpriteFrameName("toolbg.png");
-	skillsSprite->setScale(0.4);
-	skillsSprite->setAnchorPoint(Point(0,0));
-	skillsSprite->setPosition(Point(0,0));
+	//skillsSprite = Sprite::createWithSpriteFrameName("toolbg.png");
+	skillsSprite = Sprite::create();
+	skillsSprite->setTexture("skillBar.png");
+	//skillsSprite->setScale(0.4);
+	skillsSprite->setAnchorPoint(Point(0, 0));
+	skillsSprite->setPosition(Point(0, 0));
 	skillsLayer->addChild(skillsSprite);
 
-	skill01=Sprite::createWithSpriteFrameName("tower2_1.png");
-	skill01->setAnchorPoint(Point(0.5,0.5));
-	skill01->setPosition(Point(skillsSprite->getContentSize().width/5,skillsSprite->getContentSize().height/2));
+	//skill01 = Sprite::createWithSpriteFrameName("tower2_1.png");
+	skill01 = Sprite::create();
+	skill01->setTexture("skill_snow.png");
+	skill01->setAnchorPoint(Point(0.5, 0));
+	skill01->setPosition(Point(skillsSprite->getContentSize().width - 900, skillsSprite->getContentSize().height / 5));
 	skillsSprite->addChild(skill01);
 
-	skill02=Sprite::createWithSpriteFrameName("tower2_1.png");
-	skill02->setAnchorPoint(Point(0.5,0.5));
-	skill02->setPosition(Point(skillsSprite->getContentSize().width/3,skillsSprite->getContentSize().height/2));
+	//skill02 = Sprite::createWithSpriteFrameName("tower2_1.png");
+	skill02 = Sprite::create();
+	skill02->setTexture("skill_typhon.png");
+	skill02->setAnchorPoint(Point(0.5, 0));
+	skill02->setPosition(Point(skillsSprite->getContentSize().width - 660, skillsSprite->getContentSize().height / 5));
 	skillsSprite->addChild(skill02);
 
-	skill03=Sprite::createWithSpriteFrameName("tower2_1.png");
-	skill03->setAnchorPoint(Point(0.5,0.5));
-	skill03->setPosition(Point(skillsSprite->getContentSize().width/2,skillsSprite->getContentSize().height/2));
+	//skill03 = Sprite::createWithSpriteFrameName("tower2_1.png");
+	skill03 = Sprite::create();
+	skill03->setTexture("skill_meteor.png");
+	skill03->setAnchorPoint(Point(0.5, 0));
+	skill03->setPosition(Point(skillsSprite->getContentSize().width - 780, skillsSprite->getContentSize().height / 5));
 	skillsSprite->addChild(skill03);
 
 	addSkill01Timmer();
@@ -532,47 +536,58 @@ void PlayLayer::initSkillsLayer()
 
 void PlayLayer::addSkill01Timmer()
 {
-	skill01CoolBar=ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	Sprite *snowGray = Sprite::create();
+	snowGray->setTexture("skill_snow_gray.png");
+	//skill01CoolBar = ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	skill01CoolBar = ProgressTimer::create(snowGray);
 	skill01CoolBar->setType(ProgressTimer::Type::BAR);
 	skill01CoolBar->setMidpoint(Point(0.5, 0));
 	skill01CoolBar->setBarChangeRate(Point(0, 1));
 	skill01CoolBar->setPercentage(skill01CoolPercentage);
-	skill01CoolBar->setAnchorPoint(Point(0.5,0.5));
-	skill01CoolBar->setPosition(Point(skillsSprite->getContentSize().width/5,skillsSprite->getContentSize().height/2));
+	skill01CoolBar->setAnchorPoint(Point(0.5, 0));
+	skill01CoolBar->setPosition(Point(skillsSprite->getContentSize().width - 900, skillsSprite->getContentSize().height - 28));
 	skillsSprite->addChild(skill01CoolBar);
 }
 
 void PlayLayer::addSkill02Timmer()
 {
-	skill02CoolBar=ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	Sprite *typhonGray = Sprite::create();
+	typhonGray->setTexture("skill_typhon_gray.png");
+	//skill02CoolBar = ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	skill02CoolBar = ProgressTimer::create(typhonGray);
 	skill02CoolBar->setType(ProgressTimer::Type::BAR);
 	skill02CoolBar->setMidpoint(Point(0.5, 0));
 	skill02CoolBar->setBarChangeRate(Point(0, 1));
 	skill02CoolBar->setPercentage(skill02CoolPercentage);
-	skill02CoolBar->setAnchorPoint(Point(0.5,0.5));
-	skill02CoolBar->setPosition(Point(skillsSprite->getContentSize().width/3,skillsSprite->getContentSize().height/2));
+	skill02CoolBar->setAnchorPoint(Point(0.5, 0));
+	skill02CoolBar->setPosition(Point(skillsSprite->getContentSize().width - 660, skillsSprite->getContentSize().height - 30));
 	skillsSprite->addChild(skill02CoolBar);
 }
 
 void PlayLayer::addSkill03Timmer()
 {
-	skill03CoolBar=ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	Sprite *meteorGray = Sprite::create();
+	meteorGray->setTexture("skill_meteor_gray.png");
+	//skill03CoolBar = ProgressTimer::create(Sprite::createWithSpriteFrameName("tower2_2.png"));
+	skill03CoolBar = ProgressTimer::create(meteorGray);
 	skill03CoolBar->setType(ProgressTimer::Type::BAR);
 	skill03CoolBar->setMidpoint(Point(0.5, 0));
 	skill03CoolBar->setBarChangeRate(Point(0, 1));
 	skill03CoolBar->setPercentage(skill03CoolPercentage);
-	skill03CoolBar->setAnchorPoint(Point(0.5,0.5));
-	skill03CoolBar->setPosition(Point(skillsSprite->getContentSize().width/2,skillsSprite->getContentSize().height/2));
+	skill03CoolBar->setAnchorPoint(Point(0.5, 0));
+	skill03CoolBar->setPosition(Point(skillsSprite->getContentSize().width - 780, skillsSprite->getContentSize().height - 30));
 	skillsSprite->addChild(skill03CoolBar);
 }
 
 void PlayLayer::menuBackCallback(Ref* pSender)
 {
 	SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/button.wav").c_str(), false);
-	instance->clear();
+	GameManager::getInstance()->clear();
 	//回到关卡界面
 	auto scene = BlockScene::createScene();
 	Director::getInstance()->replaceScene(CCTransitionFade::create(0.5, scene));
+	SimpleAudioEngine::getInstance()->playBackgroundMusic(FileUtils::getInstance()->fullPathForFilename("sound/theme.mp3").c_str(), true);
+	SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.1f);
 }
 
 GroupEnemy* PlayLayer::currentGroup()
@@ -696,11 +711,12 @@ void PlayLayer::logic(float dt)
 	}
 	if(groupEnemy->getIsFinishedAddGroup() ==true  && instance->enemyVector.size() == 0 && groupCounter < instance->getGroupNum())
 	{
+		InfoHandle handle;
 		groupEnemy = this->nextGroup();
 		int groupTotal = instance->getGroupNum();
-		auto groupInfoText =std::to_string(groupCounter + 1);
+		auto groupInfoText = handle.intostr(groupCounter + 1);
 		groupLabel->setString(groupInfoText);
-		auto groupTotalText = std::to_string(groupTotal);
+		auto groupTotalText = handle.intostr(groupTotal);
 		groupTotalLabel->setString(groupTotalText);
 	}
 	this->addEnemy();
@@ -766,15 +782,15 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 	Rect rect06 = settingBtn->getBoundingBox();
 
 	if (!isStart)
-	{ 
-	Point reallyPoint07 = startBtn->getParent()->convertToNodeSpace(location);
-	Rect rect07 = startBtn->getBoundingBox();
-
-	if (rect07.containsPoint(reallyPoint07) )
 	{
-		startGame();
-		return true;
-	}
+		Point reallyPoint07 = startBtn->getParent()->convertToNodeSpace(location);
+		Rect rect07 = startBtn->getBoundingBox();
+
+		if (rect07.containsPoint(reallyPoint07))
+		{
+			startGame();
+			return true;
+		}
 	}
 
 
@@ -808,8 +824,8 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 	{
 		skill01Ready = false;
 		skill01Chose = false;
-		skill01->setSpriteFrame("tower2_1.png");
-		skill01->setPosition(Point(skillsSprite->getContentSize().width / 5, skillsSprite->getContentSize().height / 2));
+		//skill01->setSpriteFrame("tower2_1.png");
+		skill01->setPosition(Point(skillsSprite->getContentSize().width - 900, skillsSprite->getContentSize().height / 5));
 		setSkill01CoolPercentage(100);
 		addSkill01Timmer();
 		skill01Release();
@@ -830,10 +846,10 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 
 	if(skill02Chose==true&&(!rect02.containsPoint(reallyPoint02)))
 	{
-		skill02Ready=false;
-		skill02Chose=false;
-		skill02->setSpriteFrame("tower2_1.png");
-		skill02->setPosition(Point(skillsSprite->getContentSize().width/3,skillsSprite->getContentSize().height/2));
+		skill02Ready = false;
+		skill02Chose = false;
+		//skill02->setSpriteFrame("tower2_1.png");
+		skill02->setPosition(Point(skillsSprite->getContentSize().width - 660, skillsSprite->getContentSize().height / 5));
 		setSkill02CoolPercentage(100);
 		addSkill02Timmer();
 		skill02Release(location);
@@ -842,10 +858,10 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 
 	if(skill03Chose==true&&(!rect03.containsPoint(reallyPoint03)))
 	{
-		skill03Ready=false;
-		skill03Chose=false;
-		skill03->setSpriteFrame("tower2_1.png");
-		skill03->setPosition(Point(skillsSprite->getContentSize().width/2,skillsSprite->getContentSize().height/2));
+		skill03Ready = false;
+		skill03Chose = false;
+		//skill03->setSpriteFrame("tower2_1.png");
+		skill03->setPosition(Point(skillsSprite->getContentSize().width - 780, skillsSprite->getContentSize().height / 5));
 		setSkill03CoolPercentage(100);
 		addSkill03Timmer();
 		skill03Release(location);
@@ -854,54 +870,55 @@ bool PlayLayer::onTouchBegan(Touch *touch, Event *event)
 
 	if (rect01.containsPoint(reallyPoint01)&&skill01Ready)//判断触摸点是否在目标的范围内
 	{
-		Point p=skill01->getPosition();
-		if(p.y==skillsSprite->getContentSize().height)
+		Point p = skill01->getPosition();
+		if (p.y == skillsSprite->getContentSize().height)
 		{
-			skill01->setSpriteFrame("tower2_1.png");
-			skill01->setPosition(Point(skillsSprite->getContentSize().width/5,skillsSprite->getContentSize().height/2));
-			skill01Chose=false;
+			//skill01->setSpriteFrame("tower2_1.png");
+			//skill01->setTexture("skill_snow.png");
+			skill01->setPosition(Point(skillsSprite->getContentSize().width - 900, skillsSprite->getContentSize().height / 5));
+			skill01Chose = false;
 		}
 		else
 		{
-			skill01->setSpriteFrame("tower2_1_big.png");
-			skill01->setPosition(Point(skillsSprite->getContentSize().width/5,skillsSprite->getContentSize().height));
-			skill01Chose=true;
+			//skill01->setSpriteFrame("tower2_1_big.png");
+			skill01->setPosition(Point(skillsSprite->getContentSize().width - 900, skillsSprite->getContentSize().height / 2));
+			skill01Chose = true;
 		}
 		return true;
 	}
 
 	if (rect02.containsPoint(reallyPoint02)&&skill02Ready)//判断触摸点是否在目标的范围内
 	{
-		Point p=skill02->getPosition();
-		if(p.y==skillsSprite->getContentSize().height)
+		Point p = skill02->getPosition();
+		if (p.y == skillsSprite->getContentSize().height / 2)
 		{
-			skill02->setSpriteFrame("tower2_1.png");
-			skill02->setPosition(Point(skillsSprite->getContentSize().width/3,skillsSprite->getContentSize().height/2));
-			skill02Chose=false;
+			//skill02->setSpriteFrame("tower2_1.png");
+			skill02->setPosition(Point(skillsSprite->getContentSize().width - 660, skillsSprite->getContentSize().height / 5));
+			skill02Chose = false;
 		}
 		else
 		{
-			skill02->setSpriteFrame("tower2_1_big.png");
-			skill02->setPosition(Point(skillsSprite->getContentSize().width/3,skillsSprite->getContentSize().height));
-			skill02Chose=true;
+			//skill02->setSpriteFrame("tower2_1_big.png");
+			skill02->setPosition(Point(skillsSprite->getContentSize().width - 660, skillsSprite->getContentSize().height / 2));
+			skill02Chose = true;
 		}
 		return true;
 	}
 
 	if (rect03.containsPoint(reallyPoint03)&&skill03Ready)//判断触摸点是否在目标的范围内
 	{
-		Point p=skill03->getPosition();
-		if(p.y==skillsSprite->getContentSize().height)
+		Point p = skill03->getPosition();
+		if (p.y == skillsSprite->getContentSize().height / 2)
 		{
-			skill03->setSpriteFrame("tower2_1.png");
-			skill03->setPosition(Point(skillsSprite->getContentSize().width/2,skillsSprite->getContentSize().height/2));
-			skill03Chose=false;
+			//skill03->setSpriteFrame("tower2_1.png");
+			skill03->setPosition(Point(skillsSprite->getContentSize().width - 780, skillsSprite->getContentSize().height / 5));
+			skill03Chose = false;
 		}
 		else
 		{
-			skill03->setSpriteFrame("tower2_1_big.png");
-			skill03->setPosition(Point(skillsSprite->getContentSize().width/2,skillsSprite->getContentSize().height));
-			skill03Chose=true;
+			//skill03->setSpriteFrame("tower2_1_big.png");
+			skill03->setPosition(Point(skillsSprite->getContentSize().width - 780, skillsSprite->getContentSize().height / 2));
+			skill03Chose = true;
 		}
 		return true;
 	}
@@ -922,7 +939,7 @@ void PlayLayer::addTowerChoosePanel(Point point)
 	auto towerValue4 = instance->towerInfo[3].getCost();
 	chooseTowerpanel->setMoneyText(towerValue1, towerValue2, towerValue3, towerValue4);
 	chooseTowerpanel->setPosition(point);
-	this->addChild(chooseTowerpanel,60);
+	this->addChild(chooseTowerpanel, 60);
 }
 
 Point PlayLayer::convertTotileCoord(Point position)
@@ -996,21 +1013,21 @@ void PlayLayer::checkAndAddTowerPanle(Point position)
 
 void PlayLayer::addTower()
 {
-	if(chooseTowerpanel)
+	if (chooseTowerpanel)
 	{
 		auto type = chooseTowerpanel->getChooseTowerType();
-		if(type == TowerType::ANOTHER)
+		if (type == TowerType::ANOTHER)
 		{
 			return;
 		}
 		Point matrixCoord = convertToMatrixCoord(towerPos);
-		int MatrixIndex = static_cast<int>( matrixCoord.y * MAP_WIDTH + matrixCoord.x );
+		int MatrixIndex = static_cast<int>(matrixCoord.y * MAP_WIDTH + matrixCoord.x);
 		bool noMoneyTips = false;
 		TowerBase* tower = NULL;
-		int towerValue=0;
-		if( type == TowerType::ARROW_TOWER )
+		int towerValue = 0;
+		if (type == TowerType::ARROW_TOWER)
 		{
-			towerValue =instance->towerInfo[0].getCost();
+			towerValue = instance->towerInfo[0].getCost();
 			if (money >= towerValue)
 			{
 				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/build.wav").c_str(), false);
@@ -1022,7 +1039,7 @@ void PlayLayer::addTower()
 			else
 				noMoneyTips = true;
 		}
-		else if( type == TowerType::SLOW_TOWER )
+		else if (type == TowerType::SLOW_TOWER)
 		{
 			towerValue = instance->towerInfo[1].getCost();
 			if (money >= towerValue)
@@ -1036,7 +1053,7 @@ void PlayLayer::addTower()
 			else
 				noMoneyTips = true;
 		}
-		else if( type == TowerType::POISON_TOWER )
+		else if (type == TowerType::POISON_TOWER)
 		{
 			towerValue = instance->towerInfo[2].getCost();
 			if (money >= towerValue)
@@ -1046,7 +1063,8 @@ void PlayLayer::addTower()
 				tower->setTowerInfo(instance->towerInfo[2]);
 				tower->updateShootTime();
 				money -= towerValue;
-			}else
+			}
+			else
 				noMoneyTips = true;
 		}
 		else if (type == TowerType::CANNON_TOWER)
@@ -1063,14 +1081,14 @@ void PlayLayer::addTower()
 			else
 				noMoneyTips = true;
 		}
-		if(tower != NULL)
+		if (tower != NULL)
 		{
 			tower->setPosition(towerPos);
-			tower->runAction(Sequence::create(FadeIn::create(1.0f),NULL));
-			this->addChild(tower,0);
-			towerMatrix[MatrixIndex] =  tower;
+			tower->runAction(Sequence::create(FadeIn::create(1.0f), NULL));
+			this->addChild(tower, 0);
+			towerMatrix[MatrixIndex] = tower;
 		}
-		type =  TowerType::ANOTHER;
+		type = TowerType::ANOTHER;
 		chooseTowerpanel->setChooseTowerType(type);
 		this->removeChild(chooseTowerpanel);
 		chooseTowerpanel = NULL;
@@ -1078,7 +1096,7 @@ void PlayLayer::addTower()
 		auto moneyText = std::to_string(money);
 		moneyLabel->setString(moneyText);
 
-		if( noMoneyTips == true )
+		if (noMoneyTips == true)
 		{
 			SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/tip.wav").c_str(), false);
 			auto tips = Sprite::createWithSpriteFrameName("nomoney_mark.png");
@@ -1117,7 +1135,7 @@ void PlayLayer::CollisionDetection()
 			auto enemy = enemyVector.at(j);
 			//auto enemyRect = enemy->sprite->getBoundingBox();
 			auto enemyRect = Rect(enemy->sprite->getPositionX() - enemy->sprite->getContentSize().width / 2,
-				enemy->sprite->getPositionY(),
+				enemy->sprite->getPositionY() - enemy->sprite->getContentSize().height / 2,
 				enemy->sprite->getContentSize().width,
 				enemy->sprite->getContentSize().height);
 			if (bulletRect.intersectsRect(enemyRect))
@@ -1258,7 +1276,7 @@ void PlayLayer::addUpTowerChoosePanel(Point point, TowerBase* tower)
 
 void PlayLayer::upOrSellTower()
 {
-
+	InfoHandle handle;
 
 	if (upTowerPanleLayer != NULL)
 	{
@@ -1278,7 +1296,7 @@ void PlayLayer::upOrSellTower()
 				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->upTower();
 				money -= upValue;
-				auto moneyText = std::to_string(money);
+				auto moneyText = handle.intostr(money);
 				moneyLabel->setString(moneyText);
 			}
 			else
@@ -1296,7 +1314,7 @@ void PlayLayer::upOrSellTower()
 		if (sell)
 		{
 			money += towerMatrix[MatrixIndex]->getTowerSellValue();
-			auto moneyText = std::to_string(money);
+			auto moneyText = handle.intostr(money);
 			moneyLabel->setString(moneyText);
 			towerMatrix[MatrixIndex]->sellTower();
 			towerMatrix[MatrixIndex] = NULL;
@@ -1307,6 +1325,7 @@ void PlayLayer::upOrSellTower()
 }
 
 void PlayLayer::removeEnemy(){
+	InfoHandle hanlde;
 	auto enemyVector = instance->enemyVector;
 	Vector<EnemyBase*> enemyNeedToDelete;
 	for (int j = 0; j < enemyVector.size(); j++)
@@ -1318,7 +1337,7 @@ void PlayLayer::removeEnemy(){
 			enemyNeedToDelete.pushBack(enemy);
 			auto valueMoney = enemy->getVaule();
 			money += valueMoney;
-			auto moneyText = std::to_string(money);
+			auto moneyText =hanlde.intostr(money);
 			moneyLabel->setString(moneyText);
 		}
 	}
@@ -1345,7 +1364,7 @@ void PlayLayer::addEvolveTowerChoosePanel(Point point, TowerBase* tower)
 
 void PlayLayer::evolveOrSellTower()
 {
-
+	InfoHandle handle;
 
 	if (evolveTowerPanleLayer != NULL)
 	{
@@ -1365,7 +1384,7 @@ void PlayLayer::evolveOrSellTower()
 				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->evolve1Tower();
 				money -= evolve1Value;
-				auto moneyText = std::to_string(money);
+				auto moneyText = handle.intostr(money);
 				moneyLabel->setString(moneyText);
 			}
 			else
@@ -1388,7 +1407,7 @@ void PlayLayer::evolveOrSellTower()
 				SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/up.wav").c_str(), false);
 				towerMatrix[MatrixIndex]->evolve2Tower();
 				money -= evolve2Value;
-				auto moneyText = std::to_string(money);
+				auto moneyText = handle.intostr(money);
 				moneyLabel->setString(moneyText);
 			}
 			else
@@ -1406,7 +1425,7 @@ void PlayLayer::evolveOrSellTower()
 		if (sell)
 		{
 			money += towerMatrix[MatrixIndex]->getTowerSellValue();
-			auto moneyText = std::to_string(money);
+			auto moneyText = handle.intostr(money);
 			moneyLabel->setString(moneyText);
 			towerMatrix[MatrixIndex]->sellTower();
 			towerMatrix[MatrixIndex] = NULL;
@@ -1434,7 +1453,7 @@ void PlayLayer::checkBullet(){
 		bullet->setIsFollow(false);
 		}
 		}*/
-		if (bullet->getToDelete() == TRUE)
+		if (bullet->getToDelete() == true)
 		{
 			bulletNeedToDelete.pushBack(bullet);
 		}
@@ -1456,4 +1475,3 @@ void PlayLayer::startGame()
 	isStart = true;
 	startBtn->removeFromParent();
 }
-

@@ -16,7 +16,6 @@ void GameManager::clear()
 	//towerVector.clear();
 	groupVector.clear();
 }
-
 void GameManager::setTowerInfo()
 {
 	InfoHandle handle;

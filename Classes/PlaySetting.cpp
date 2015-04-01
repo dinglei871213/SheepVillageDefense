@@ -1,27 +1,17 @@
 #include "PlaySetting.h"
-#include "BlockScene.h"
-#include "PlayLayer.h"
-#include "LoadLevelInfo.h"
 #include <iostream>
+#include "LoadLevelInfo.h"
 using namespace std;
-
 PlaySetting::PlaySetting()
 :settingSprite(NULL)
 , resumeBtn(NULL)
 , quitBtn(NULL)
 , restartBtn(NULL)
 , musicLabel(NULL)
-, musicOnBg(NULL)
-, musicOnBtn(NULL)
-, musicOffBg(NULL)
-, musicOffBtn(NULL)
+, musicBtn(NULL)
 , effectLabel(NULL)
-, effectOnBg(NULL)
-, effectOnBtn(NULL)
-, effectOffBg(NULL)
-, effectOffBtn(NULL)
+, effectBtn(NULL)
 , musicOn(false)
-, effectOn(false)
 {}
 
 PlaySetting::~PlaySetting()
@@ -30,6 +20,9 @@ PlaySetting::~PlaySetting()
 Scene* PlaySetting::createSettingScene(RenderTexture *renderTexture)
 {
 	Size winSize = Director::getInstance()->getWinSize();
+
+	//Director::getInstance()->getTextureCache()->addImage("buttonOn.png");
+	//Director::getInstance()->getTextureCache()->addImage("buttonOff.png");
 
 	Scene *settingScene = Scene::create();
 	PlaySetting *settingLayer = PlaySetting::create();
@@ -45,8 +38,8 @@ Scene* PlaySetting::createSettingScene(RenderTexture *renderTexture)
 	settingBg->setPosition(Point(winSize.width / 2, winSize.height / 2));
 	settingScene->addChild(settingBg);**/
 
-	settingLayer->musicAddEffectButton();
-
+	//settingLayer->musicAddEffectButton();
+	/*
 	settingLayer->resumeBtn = Sprite::create();
 	settingLayer->resumeBtn->setSpriteFrame("playbutton1.png");
 	settingLayer->resumeBtn->setPosition(Point(winSize.width / 2, winSize.height / 1.9));
@@ -60,12 +53,17 @@ Scene* PlaySetting::createSettingScene(RenderTexture *renderTexture)
 	settingLayer->restartBtn = Sprite::create();
 	settingLayer->restartBtn->setSpriteFrame("playbutton1.png");
 	settingLayer->restartBtn->setPosition(Point(winSize.width / 2, winSize.height / 4.8));
-	settingLayer->settingSprite->addChild(settingLayer->restartBtn);
-
+	settingLayer->settingSprite->addChild(settingLayer->restartBtn);**/
+	/*
 	settingLayer->musicLabel = CCLabelTTF::create("MUSIC", "MarkerFelt-Thin", 30);
-	settingLayer->musicLabel->setPosition(Point(winSize.width / 3.0, winSize.height / 1.1));
+	settingLayer->musicLabel->setPosition(Point(winSize.width / 2.4, winSize.height / 1.2));
 	settingLayer->musicLabel->setColor(cocos2d::Color3B::ORANGE);
-	settingLayer->settingSprite->addChild(settingLayer->musicLabel);
+	settingLayer->settingSprite->addChild(settingLayer->musicLabel);**/
+
+	settingLayer->musicText = Sprite::create();
+	settingLayer->musicText->setTexture("musicText.png");
+	settingLayer->musicText->setPosition(Point(winSize.width / 2.4, winSize.height / 1.2));
+	settingLayer->settingSprite->addChild(settingLayer->musicText);
 	/*
 	settingLayer->musicOffBg = Sprite::create();
 	settingLayer->musicOffBg->setSpriteFrame("playbutton1.png");
@@ -77,29 +75,29 @@ Scene* PlaySetting::createSettingScene(RenderTexture *renderTexture)
 	settingLayer->musicOnBg->setPosition(Point(winSize.width / 1.8, winSize.height / 1.1));
 	settingLayer->settingSprite->addChild(settingLayer->musicOnBg);**/
 
-	settingLayer->musicOffBtn = Sprite::create();
-	settingLayer->musicOffBtn->setPosition(Point(winSize.width / 2.2, winSize.height / 1.1));
-	settingLayer->settingSprite->addChild(settingLayer->musicOffBtn);
-
-	settingLayer->musicOnBtn = Sprite::create();
-	settingLayer->musicOnBtn->setPosition(Point(winSize.width / 1.8, winSize.height / 1.1));
-	settingLayer->settingSprite->addChild(settingLayer->musicOnBtn);
+	settingLayer->musicBtn = Sprite::create();
+	settingLayer->musicBtn->setPosition(Point(winSize.width / 1.7, winSize.height / 1.2));
+	settingLayer->settingSprite->addChild(settingLayer->musicBtn);
 
 	if (SimpleAudioEngine::sharedEngine()->isBackgroundMusicPlaying())
 	{
-		settingLayer->musicOffBtn->setSpriteFrame("playbutton1.png");
-		settingLayer->musicOnBtn->setSpriteFrame("playbutton2.png");
+		settingLayer->musicBtn->setTexture("buttonOn.png");
 		settingLayer->musicOn = true;
 	}
 	else{
-		settingLayer->musicOffBtn->setSpriteFrame("playbutton2.png");
-		settingLayer->musicOnBtn->setSpriteFrame("playbutton1.png");
+		settingLayer->musicBtn->setTexture("buttonOff.png");
 	}
-
+	/*
 	settingLayer->effectLabel = CCLabelTTF::create("EFFECT", "MarkerFelt-Thin", 30);
-	settingLayer->effectLabel->setPosition(Point(winSize.width / 3.0, winSize.height / 1.3));
+	settingLayer->effectLabel->setPosition(Point(winSize.width / 2.4, winSize.height / 1.4));
 	settingLayer->effectLabel->setColor(cocos2d::Color3B::ORANGE);
-	settingLayer->settingSprite->addChild(settingLayer->effectLabel);
+	settingLayer->settingSprite->addChild(settingLayer->effectLabel);**/
+
+	settingLayer->effectText = Sprite::create();
+	settingLayer->effectText->setTexture("musicText.png");
+	settingLayer->effectText->setPosition(Point(winSize.width / 2.4, winSize.height / 1.4));
+	settingLayer->settingSprite->addChild(settingLayer->effectText);
+
 	/*
 	settingLayer->effectOffBg = Sprite::create();
 	settingLayer->effectOffBg->setSpriteFrame("playbutton1.png");
@@ -111,120 +109,179 @@ Scene* PlaySetting::createSettingScene(RenderTexture *renderTexture)
 	settingLayer->effectOnBg->setPosition(Point(winSize.width / 1.8, winSize.height / 1.3));
 	settingLayer->settingSprite->addChild(settingLayer->effectOnBg);**/
 
-	settingLayer->effectOffBtn = Sprite::create();
-	settingLayer->effectOffBtn->setPosition(Point(winSize.width / 2.2, winSize.height / 1.3));
-	settingLayer->settingSprite->addChild(settingLayer->effectOffBtn);
-
-	settingLayer->effectOnBtn = Sprite::create();
-	settingLayer->effectOnBtn->setPosition(Point(winSize.width / 1.8, winSize.height / 1.3));
-	settingLayer->settingSprite->addChild(settingLayer->effectOnBtn);
+	settingLayer->effectBtn = Sprite::create();
+	settingLayer->effectBtn->setPosition(Point(winSize.width / 1.7, winSize.height / 1.4));
+	settingLayer->settingSprite->addChild(settingLayer->effectBtn);
 
 	settingLayer->instance = GameManager::getInstance();
+
 	if (settingLayer->instance->getEffectOn() == true)
 	{
-		settingLayer->effectOffBtn->setSpriteFrame("playbutton1.png");
-		settingLayer->effectOnBtn->setSpriteFrame("playbutton2.png");
+		settingLayer->effectBtn->setTexture("buttonOn.png");
 	}
 	else{
-		settingLayer->effectOffBtn->setSpriteFrame("playbutton2.png");
-		settingLayer->effectOnBtn->setSpriteFrame("playbutton1.png");
+		settingLayer->effectBtn->setTexture("buttonOff.png");
 	}
+
+	settingLayer->setMenu();
 
 	settingLayer->setListener();
 
 	return settingScene;
 }
 
+//设置界面下方的三个按钮
+void PlaySetting::setMenu()
+{
+	Size winSize = Director::getInstance()->getWinSize();
+	Sprite *resumeBtn01 = Sprite::create();
+	resumeBtn01->setTexture("resumeOn.png");
+	Sprite *resumeBtn02 = Sprite::create();
+	resumeBtn02->setTexture("resumeDown.png");
+	MenuItemSprite *resumeItem = MenuItemSprite::create(resumeBtn01, resumeBtn02, CC_CALLBACK_1(PlaySetting::resumeCallback, this));
+	Sprite *quitBtn01 = Sprite::create();
+	quitBtn01->setTexture("quitOn.png");
+	Sprite *quitBtn02 = Sprite::create();
+	quitBtn02->setTexture("quitDown.png");
+	MenuItemSprite *quitItem = MenuItemSprite::create(quitBtn01, quitBtn02, CC_CALLBACK_1(PlaySetting::quitCallback, this));
+	Sprite *restartBtn01 = Sprite::create();
+	restartBtn01->setTexture("restartOn.png");
+	Sprite *restartBtn02 = Sprite::create();
+	restartBtn02->setTexture("restartDown.png");
+
+	MenuItemSprite *restartItem = MenuItemSprite::create(restartBtn01, restartBtn02, CC_CALLBACK_1(PlaySetting::restartCallback, this));
+
+	auto menu = Menu::create(resumeItem, quitItem, restartItem, NULL);
+
+	menu->alignItemsVertically();
+
+	menu->setPosition(Point(winSize.width / 2, winSize.height / 3));
+
+	settingSprite->addChild(menu);
+}
+
+//添加监听事件
 void PlaySetting::setListener()
 {
 	auto touchListener = EventListenerTouchOneByOne::create();
-	touchListener->onTouchBegan = CC_CALLBACK_2(PlaySetting::onTouchBegan,this);
+	touchListener->onTouchBegan = CC_CALLBACK_2(PlaySetting::onTouchBegan, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 }
 
+//监听事件回调函数
 bool PlaySetting::onTouchBegan(Touch *touch, Event *event)
 {
 	auto location = touch->getLocation();
-
+	/*
 	Point reallyPoint01 = resumeBtn->getParent()->convertToNodeSpace(location);
 	Rect rect01 = resumeBtn->getBoundingBox();
 	Point reallyPoint02 = quitBtn->getParent()->convertToNodeSpace(location);
 	Rect rect02 = quitBtn->getBoundingBox();
 	Point reallyPoint03 = restartBtn->getParent()->convertToNodeSpace(location);
 	Rect rect03 = restartBtn->getBoundingBox();
-	Point reallyPoint04 = musicOffBtn->getParent()->convertToNodeSpace(location);
-	Rect rect04 = musicOffBtn->getBoundingBox();
-	Point reallyPoint05 = musicOnBtn->getParent()->convertToNodeSpace(location);
-	Rect rect05 = musicOnBtn->getBoundingBox();
-	Point reallyPoint06 = effectOffBtn->getParent()->convertToNodeSpace(location);
-	Rect rect06 = effectOffBtn->getBoundingBox();
-	Point reallyPoint07 = effectOnBtn->getParent()->convertToNodeSpace(location);
-	Rect rect07 = effectOnBtn->getBoundingBox();
-
-	if (rect01.containsPoint(reallyPoint01))//继续游戏
+	**/
+	Point reallyPoint04 = musicBtn->getParent()->convertToNodeSpace(location);
+	Rect rect04 = musicBtn->getBoundingBox();
+	Point reallyPoint05 = effectBtn->getParent()->convertToNodeSpace(location);
+	Rect rect05 = effectBtn->getBoundingBox();
+	/*
+	if (rect01.containsPoint(reallyPoint01))
 	{
 		Director::getInstance()->popScene();
 	}
-	else if (rect02.containsPoint(reallyPoint02))//退出游戏
+	else if (rect02.containsPoint(reallyPoint02))
 	{
 		auto blockScene = BlockScene::createScene();
 		Director::getInstance()->replaceScene(TransitionFade::create(0.1f, blockScene));
 	}
-	else if (rect03.containsPoint(reallyPoint03))//重新开始
+	else if (rect03.containsPoint(reallyPoint03))
 	{
-		//获得当前关卡对应资源文件名
-		string fileName = UserDefault::getInstance()->getStringForKey("currLevelFile");
-		//载入关卡资源
-		LoadLevelinfo::createLoadLevelinfo(fileName.c_str())->readLevelInfo();
-		Director::getInstance()->replaceScene(TransitionFadeBL::create(0.1f, PlayLayer::createScene()));
-	}
-	else if (rect04.containsPoint(reallyPoint04) && musicOn == true)
+		auto playLayer = PlayLayer::createScene();
+		GameManager *instance = GameManager::getInstance();
+		instance->clear();
+		Director::getInstance()->replaceScene(TransitionFade::create(0.1f, playLayer));
+	}**/
+	if (rect04.containsPoint(reallyPoint04))
 	{
-		SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
-		musicOnBtn->setSpriteFrame("playbutton1.png");
-		musicOffBtn->setSpriteFrame("playbutton2.png");
-		musicOn = false;
-	}
-	else if (rect05.containsPoint(reallyPoint05) && musicOn == false)
-	{
-		SimpleAudioEngine::sharedEngine()->rewindBackgroundMusic();
-		musicOffBtn->setSpriteFrame("playbutton1.png");
-		musicOnBtn->setSpriteFrame("playbutton2.png");
-		musicOn = true;
-	}
-	else if (rect06.containsPoint(reallyPoint06) && instance->getEffectOn() == true)
-	{
-		effectOnBtn->setSpriteFrame("playbutton1.png");
-		effectOffBtn->setSpriteFrame("playbutton2.png");
-		instance->setEffectOn(false);
-	}
-	else if (rect07.containsPoint(reallyPoint07) && instance->getEffectOn() == false)
-	{
-		effectOnBtn->setSpriteFrame("playbutton2.png");
-		effectOffBtn->setSpriteFrame("playbutton1.png");
-		instance->setEffectOn(true);
-	}
+		if (musicOn == true)
+		{
+			SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+			musicBtn->setTexture("buttonOff.png");
+			musicOn = false;
+		}
+		else
+		{
+			SimpleAudioEngine::sharedEngine()->rewindBackgroundMusic();
+			musicBtn->setTexture("buttonOn.png");
+			musicOn = true;
+		}
 
+	}
+	else if (rect05.containsPoint(reallyPoint05))
+	{
+		if (instance->getEffectOn() == true)
+		{
+			effectBtn->setTexture("buttonOff.png");
+			instance->setEffectOn(false);
+		}
+		else
+		{
+			effectBtn->setTexture("buttonOn.png");
+			instance->setEffectOn(true);
+		}
+	}
 	return true;
 }
 
-
+/*
 void  PlaySetting::musicAddEffectButton()
 {
-	Size winSize = Director::getInstance()->getWinSize();
+Size winSize = Director::getInstance()->getWinSize();
 
-	ControlPotentiometer* potentiometer = ControlPotentiometer::create("base.png", "bar.png", "button.png");
-	potentiometer->setPosition(Point(winSize.width / 3, winSize.height / 2));
-	potentiometer->setMaximumValue(10);
-	potentiometer->setMinimumValue(0);
-	float f = SimpleAudioEngine::sharedEngine()->getBackgroundMusicVolume();
-	potentiometer->setValue(SimpleAudioEngine::sharedEngine()->getBackgroundMusicVolume());
-	potentiometer->addTargetWithActionForControlEvents(this, cccontrol_selector(PlaySetting::onValueChange), Control::EventType::VALUE_CHANGED);
-	settingSprite->addChild(potentiometer);
+ControlPotentiometer* potentiometer = ControlPotentiometer::create("base.png", "bar.png", "button.png");
+potentiometer->setPosition(Point(winSize.width / 3, winSize.height / 2));
+potentiometer->setMaximumValue(10);
+potentiometer->setMinimumValue(0);
+float f = SimpleAudioEngine::sharedEngine()->getBackgroundMusicVolume();
+potentiometer->setValue(SimpleAudioEngine::sharedEngine()->getBackgroundMusicVolume());
+potentiometer->addTargetWithActionForControlEvents(this, cccontrol_selector(PlaySetting::onValueChange), Control::EventType::VALUE_CHANGED);
+settingSprite->addChild(potentiometer);
 }
 
 void PlaySetting::onValueChange(Ref* psender, Control::EventType event)
 {
-	ControlPotentiometer* potentiometer = (ControlPotentiometer*)psender;
-	SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(potentiometer->getValue()/10.0f);
-	}
+ControlPotentiometer* potentiometer = (ControlPotentiometer*)psender;
+SimpleAudioEngine::sharedEngine()->setBackgroundMusicVolume(potentiometer->getValue() / 10.0f);
+SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+}**/
+
+//继续游戏按钮回调函数
+void PlaySetting::resumeCallback(Ref* pSender)
+{
+	Director::getInstance()->popScene();
+}
+
+//结束关卡按钮回调函数
+void PlaySetting::quitCallback(Ref* pSender)
+{
+
+	auto blockScene = BlockScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(0.1f, blockScene));
+	SimpleAudioEngine::getInstance()->playBackgroundMusic(FileUtils::getInstance()->fullPathForFilename("sound/theme.mp3").c_str(), true);
+	SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.1f);
+}
+
+//重新开始按钮回调函数
+void PlaySetting::restartCallback(Ref* pSender)
+{
+	//获得当前关卡对应资源文件名
+	int i = UserDefault::getInstance()->getIntegerForKey("currBlock");
+	char fnext[10];
+	sprintf(fnext, "%d", i);
+	string fnid = fnext;
+	string currName = "levelInfo_" + fnid + ".plist";
+	//载入关卡资源
+	GameManager::getInstance()->clear();
+	LoadLevelinfo::createLoadLevelinfo(currName.c_str())->readLevelInfo();
+	Director::getInstance()->replaceScene(TransitionFadeBL::create(0.1f, PlayLayer::createScene()));
+}

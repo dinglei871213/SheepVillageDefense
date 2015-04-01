@@ -23,13 +23,13 @@ public:
 	
 
 	//重新挑战按钮的触发函数
-	void  ResultScene::retryTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  retryTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 
 	//离开按钮的触发函数
-	void  ResultScene::leaveTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  leaveTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 
 	//下一关按钮的触发函数
-	void  ResultScene::nextTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  nextTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 
 	
 
@@ -41,11 +41,11 @@ public:
 	
 	// implement the "static create()" method manually
 	CREATE_FUNC(ResultScene);
-
+	Sprite* starpic;			//得分星星图片
 private:
 
 	//结果评价部分
-	static Sprite* starpic;			//得分星星图片
+	
 	static Button* retrybtn;		//重新挑战按钮
 	static Button* leavebtn;		//离开按钮
 	static Button* nextbtn;			//下一关按钮

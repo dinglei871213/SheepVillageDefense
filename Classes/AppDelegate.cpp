@@ -1,6 +1,6 @@
 #include "AppDelegate.h"
 #include "LoadingResScene.h"
-
+#include "HelloWorldScene.h"
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
@@ -15,6 +15,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
+
     if(!glview) {
         glview = GLViewImpl::create("Sheep Village Defense");
         director->setOpenGLView(glview);
@@ -34,9 +35,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     //director->setContentScaleFactor(864.0f / 320.0f);
 	director->setContentScaleFactor(640.0f / 640.0f);
     
+
     // create a scene. it's an autorelease object
     auto scene = LoadingResScene::createScene();
-    
+
     // run
     director->runWithScene(scene);
     

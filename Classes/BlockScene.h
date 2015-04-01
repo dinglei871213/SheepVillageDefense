@@ -31,35 +31,36 @@ public:
 	void  backTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 
 	//开始战斗按钮的触发事件函数
-	void BlockScene::fightTouchDown(Control::Ref* pSender, Widget::TouchEventType type,int i);
+	void fightTouchDown(Control::Ref* pSender, Widget::TouchEventType type,int i);
 
 	//关闭窗口的触发事件函数
-	void BlockScene::closeTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void closeTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 	
 	//小狼资料信息窗口的触发事件函数
-	void  BlockScene::wolfTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  wolfTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 
 	//防御塔资料窗口的触发函数
-	void  BlockScene::towerTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  towerTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 	
 	//提示信息窗口的触发函数
-	void  BlockScene::tipTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  tipTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 	
 	
 	//离开按钮的触发函数
-	void  BlockScene::leaveTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  leaveTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
 	
 	//升级按钮的触发事件函数
 
-	void  BlockScene::uBtnTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
-	void  BlockScene::resetTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
-	void BlockScene::upTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
+	void  uBtnTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
+	void  resetTouchDown(Control::Ref* pSender, Widget::TouchEventType type);
+	void  upTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
 
 
 	
 	void certainblockTouchDown(Control::Ref* pSender, Widget::TouchEventType type,int i);
 
 	void certaintowerTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
+	void certainwolfTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i);
 	//弹出图层窗口
 	Layer*	popBlock();
 	Layer*	popLibrary();
@@ -68,11 +69,22 @@ public:
 	Layer*  popTower();
 	Layer*	popCertainBlock(int i);
 	Layer*  popUpgrade();
+	Layer*	popWolf();
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(BlockScene);
 
-	
+	Sprite* sp1;			//关卡1得分图片
+	Sprite* sp2;			//关卡1得分图片
+	Sprite* sp3;			//关卡3得分图片
+	Sprite* sp4;			//关卡4得分图片
+	Sprite* sp5;			//关卡5得分图片
+	Sprite* sp6;			//关卡6得分图片
+	Sprite* sp7;			//关卡7得分图片
+	Sprite* sp8;			//关卡8得分图片
+	Sprite* sp9;			//关卡9得分图片
+	Sprite* suolue;			//关卡缩略图
+	Sprite* btnImage;          //每个按钮对应的图标
 private:
 	//关卡整体部分
 	static int layernum;				//图层数量
@@ -80,8 +92,9 @@ private:
 	static int blocknum;				//已解锁的关卡数量
 	static Vector<Button*> btnlist[9];	//按钮集合
 	static Vector<Sprite*> splist[9];	//关卡得分图片集合
-	static Vector<Text*>textlist[9];	//关卡序号文本集合
-	static Vector<Button*>towerlibbtn[6];//防御塔资料按钮集合
+	static Vector<Text*> textlist[9];	//关卡序号文本集合
+	static Vector<Button*> towerlibbtn[8];//防御塔资料按钮集合
+	static Vector<Button*> wolflibbtn[6];//小狼资料按钮集合
 	//关卡部分
 	static Button* block1btn;		//关卡1按钮
 	static Button* block2btn;		//关卡2按钮
@@ -93,15 +106,7 @@ private:
 	static Button* block8btn;		//关卡8按钮
 	static Button* block9btn;		//关卡9按钮
 
-	static Sprite* sp1;			//关卡1得分图片
-	static Sprite* sp2;			//关卡1得分图片
-	static Sprite* sp3;			//关卡3得分图片
-	static Sprite* sp4;			//关卡4得分图片
-	static Sprite* sp5;			//关卡5得分图片
-	static Sprite* sp6;			//关卡6得分图片
-	static Sprite* sp7;			//关卡7得分图片
-	static Sprite* sp8;			//关卡8得分图片
-	static Sprite* sp9;			//关卡9得分图片
+	 
 
 	static Text*  text1;		//关卡1说明文本
 	static Text*  text2;		//关卡2说明文本
@@ -121,7 +126,7 @@ private:
 	//具体关卡部分
 	static Button* fightbtn;		//开始战斗按钮
 	static Button* closebtn;		//关闭窗口按钮
-	static Sprite* suolue;			//关卡缩略图
+	 
 	static Text* blockinfo;			//关卡介绍
 	static Text* blocktitle;		//关卡标题
 	static Text* blockid;			//关卡序号
@@ -145,13 +150,28 @@ private:
 	static Button*	tower4btn;		//防御塔资料界面按钮4
 	static Button*	tower5btn;		//防御塔资料界面按钮5
 	static Button*	tower6btn;		//防御塔资料界面按钮6
-	static Sprite*  towersprite;	//防御塔图片
+	static Button*	tower7btn;		//防御塔资料界面按钮6
+	static Button*	tower8btn;		//防御塔资料界面按钮6
+	
 	static Text*	towername;		//防御塔名称
 	static Text*	towerinfo;		//防御塔信息
 	static Text*	damage;			//防御塔攻击力
 	static Text*	speed;			//防御塔攻速
 	static Text*	range;			//防御塔射程
 	static Text*	specialtext;	//防御塔特性说明
+
+	static Button*	wolf1btn;		//小狼资料界面按钮1
+	static Button*	wolf2btn;		//小狼资料界面按钮2
+	static Button*	wolf3btn;		//小狼资料界面按钮3
+	static Button*	wolf4btn;		//小狼资料界面按钮4
+	static Button*	wolf5btn;		//小狼资料界面按钮5
+	static Button*	wolf6btn;		//小狼资料界面按钮6
+
+	static Text*	wolfname;		//小狼名称
+	static Text*	wolfinfo;		//小狼信息
+	static Text*	health;			//小狼生命值
+	static Text*	movingspeed;	//小狼移动速度
+	
 
 	static Vector<Button*> uBtnlist[28];	//升级按钮集合
 	static Button* uBtn1;           //升级技能1
@@ -190,7 +210,6 @@ private:
 	static Button* confirm;			  //确认按钮 
 	static Text* nameText;            //技能的名称
 	static Text* infoText;			  //技能的信息
-	static Sprite* btnImage;          //每个按钮对应的图标
 	static Text* singleStar;          //每个图标对应的星星数量
 	static Button* upgrade;           //确定升级按钮
 	static bool btnState[28];        //每个按钮的状态

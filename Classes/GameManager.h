@@ -32,17 +32,13 @@ public:
 	CC_SYNTHESIZE(bool, isFinishedAddGroup, IsFinishedAddGroup);
 	CC_SYNTHESIZE(std::string, curBgName, CurBgName);
 	CC_SYNTHESIZE(bool, effectOn, EffectOn);
-    
+	CC_SYNTHESIZE(bool, musicOn, MusicOn);
     bool init();
 	void clear();
     
 	static GameManager* getInstance();
-	void setTowerInfo();
-
-
 	Tower towerInfo[8];
-	Wolf wolfInfo[8];
-    
+	void setTowerInfo();
 private:
 	static GameManager * instance;
 };

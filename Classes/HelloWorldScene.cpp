@@ -1,26 +1,34 @@
 #include "HelloWorldScene.h"
 #include "BlockScene.h"
 #include "cocostudio/CocoStudio.h"
-#include "extensions/cocos-ext.h"
+#include "cocos-ext.h"
 #include "LevelLayer.h"
 #include "LevelSelectPage.h"
+#include "SimpleAudioEngine.h"
+#include "InfoHandle.h"
+#include "LoadLevelInfo.h"
+#include "PlayLayer.h"
 //cocos2dx 3.x版本 CCControl更改为Control ，CCObject更改为Ref ！！！！！！
 
 USING_NS_CC;
 using namespace extension;//Control类所需要声明的命名空间
 using namespace cocostudio ;
 using namespace cocostudio::timeline;
-
+using namespace CocosDenshion;
 
 //初始化静态资源项，作为全局变量引用
 Button* HelloWorld::startgamebtn	= new Button();
-Button* HelloWorld::rankbtn			= new Button();
 Button* HelloWorld::settingbtn		= new Button();
 Button* HelloWorld::helpbtn			= new Button();
 Button* HelloWorld::aboutbtn		= new Button();
 Button* HelloWorld::storybtn		= new Button();
 Button* HelloWorld::challengebtn	= new Button();
 Button* HelloWorld::backbtn			= new Button();
+Button* HelloWorld::soundonbtn = new Button();
+Button* HelloWorld::soundoffbtn = new Button();
+Button* HelloWorld::musiconbtn = new Button();
+Button* HelloWorld::musicoffbtn = new Button();
+Button* HelloWorld::restartbtn = new Button();
 
 HelloWorld* HelloWorld::instance01;
 
@@ -61,7 +69,7 @@ bool HelloWorld::init()
 
 	instance = GameManager::getInstance();
 	instance->setEffectOn(true);
-
+	instance->setMusicOn(true);
 	//加载资源文件生成根节点，对应场景图中的根节点
 	auto rootNode = CSLoader::createNode("MainScene.csb");
 	this->addChild(rootNode);
@@ -69,7 +77,6 @@ bool HelloWorld::init()
 	//通过根节点得到对应标识名称的控件，转化为对应类型的对象。
 	//此处注意节点的层级关系，如若分为多层，需逐层调用
 	startgamebtn =	(Button*)rootNode->getChildByName("startgame");
-	rankbtn		 =	(Button*)rootNode->getChildByName("rank");
 	settingbtn	 =	(Button*)rootNode->getChildByName("setting");
 	helpbtn		 =	(Button*)rootNode->getChildByName("help");
 	aboutbtn	 =	(Button*)rootNode->getChildByName("about");
@@ -78,7 +85,6 @@ bool HelloWorld::init()
 
 	//为按钮绑定相应的触发事件
 	startgamebtn	->	addTouchEventListener(CC_CALLBACK_2(HelloWorld::startgameTouchDown,this));
-	rankbtn			->	addTouchEventListener(CC_CALLBACK_2(HelloWorld::rankTouchDown, this));
 	settingbtn		->	addTouchEventListener(CC_CALLBACK_2(HelloWorld::settingTouchDown, this));
 	helpbtn			->	addTouchEventListener(CC_CALLBACK_2(HelloWorld::helpTouchDown, this));
 	aboutbtn		->	addTouchEventListener(CC_CALLBACK_2(HelloWorld::aboutTouchDown, this));
@@ -89,14 +95,21 @@ bool HelloWorld::init()
 
 //按钮的按下响应事件
 void  HelloWorld::startgameTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+	Size winSize = Director::getInstance()->getWinSize();
+	RenderTexture *renderTexture = RenderTexture::create(winSize.width, winSize.height);
 	switch (type)
 	{
 	case cocos2d::ui::Widget::TouchEventType::BEGAN:
 		break;
 	case cocos2d::ui::Widget::TouchEventType::MOVED:
 		break;
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		popUpMode();
+	case cocos2d::ui::Widget::TouchEventType::ENDED:{
+														
+														renderTexture->begin();
+														this->getParent()->visit();
+														renderTexture->end();
+														Director::getInstance()->pushScene(HelloWorld::popUpMode(renderTexture));
+	}
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
 		break;
 	default:
@@ -105,31 +118,22 @@ void  HelloWorld::startgameTouchDown(Control::Ref* pSender, Widget::TouchEventTy
 	
 }
 
-void  HelloWorld::rankTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
-	switch (type)
-	{
-	case cocos2d::ui::Widget::TouchEventType::BEGAN:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::MOVED:
-		break;
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		rankbtn->setRotation(60.00);
-	case cocos2d::ui::Widget::TouchEventType::CANCELED:
-		break;
-	default:
-		break;
-	}
-	
-}
+
 void  HelloWorld::settingTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+	Size winSize = Director::getInstance()->getWinSize();
+	RenderTexture *renderTexture = RenderTexture::create(winSize.width, winSize.height);
 	switch (type)
 	{
 	case cocos2d::ui::Widget::TouchEventType::BEGAN:
 		break;
 	case cocos2d::ui::Widget::TouchEventType::MOVED:
 		break;
-	case cocos2d::ui::Widget::TouchEventType::ENDED:
-		rankbtn->setColor(Color3B::BLUE);
+	case cocos2d::ui::Widget::TouchEventType::ENDED:{
+														renderTexture->begin();
+														this->getParent()->visit();
+														renderTexture->end();
+														Director::getInstance()->pushScene(MainSceneSetting::createSettingScene(renderTexture));
+	}
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
 		break;
 	default:
@@ -156,10 +160,11 @@ void  HelloWorld::helpTouchDown(Control::Ref* pSender, Widget::TouchEventType ty
 	}
 }
 
+
+
 void HelloWorld::popUpHelp(){
 	LevelLayer* scrollView = new LevelLayer();
 	scrollView->init();
-
 	//生成三个滑动节点，添加至滑动图层
 	auto page0 = LevelSelectPage::create("selectLevelBg.png", 0);
 	page0->setTag(0);
@@ -204,12 +209,12 @@ void HelloWorld::popUpHelp(){
 	Button *button = Button::create();
 	button->loadTextures("fanhui2.png","fanhui.png","fanhui.png");
 	button->setPosition(ccp(900.0,44.0));
-	CCDictionary* plistDic = CCDictionary::createWithContentsOfFile("chinese.plist");//从plist文件中读取资料相关的中文字符	
-	CCString* back = (CCString *)plistDic->objectForKey("helpback");
-	button->setTitleText(back->getCString());
-	button->setTitleColor(Color3B::BLUE);
-	button->setTitleFontName("girl.ttf");
-	button->setTitleFontSize(50);
+	//CCDictionary* plistDic = CCDictionary::createWithContentsOfFile("towerlib.plist");//从plist文件中读取资料相关的中文字符	
+	//CCString* back = (CCString *)plistDic->objectForKey("helpback");
+	//button->setTitleText(back->getCString());
+	//button->setTitleColor(Color3B::BLUE);
+	//button->setTitleFontName("girl.ttf");
+	//button->setTitleFontSize(50);
 	button->setScale(0.3);
 	this->addChild(button);
 	button->addTouchEventListener(CC_CALLBACK_2(HelloWorld::exitHelpTouchDown, this));
@@ -233,8 +238,22 @@ void HelloWorld::exitHelpTouchDown(Control::Ref* pSender, Widget::TouchEventType
 		break;
 	}
 }
+
 void  HelloWorld::aboutTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
-	rankbtn->setBright(true);
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:{
+		popUpHelp();
+	}
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
 }
 
 void  HelloWorld::storyTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
@@ -263,25 +282,203 @@ void  HelloWorld::backTouchDown(Control::Ref* pSender, Widget::TouchEventType ty
 }
 
 
-void HelloWorld::popUpMode(){
+Scene *HelloWorld::popUpMode(RenderTexture *renderTexture){
 
+	Scene *modeSelectScene = Scene::create();
+	Sprite* modeSelectSprite = Sprite::createWithTexture(renderTexture->getSprite()->getTexture());
 	//加载资源文件生成图层
 	LayerRGBA* layer = (LayerRGBA*)CSLoader::createNode("gamemode.csb");
 	//设置图层中心位置
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	CCPoint pointCenter = ccp(winSize.width/2-320, winSize.height/2-272);
+	modeSelectSprite->setPosition(Point(winSize.width / 2, winSize.height / 2));
+	CCPoint pointCenter = ccp(winSize.width / 2 - 320, winSize.height / 2 - 272);
 	layer->setPosition(pointCenter);
-	this->addChild(layer);
+	modeSelectSprite->setFlipY(true);
+	modeSelectScene->addChild(modeSelectSprite);
+	modeSelectScene->addChild(layer);
+
+	//this->addChild(layer);
 
 	//获取图层中按钮对象
 	storybtn = (Button*)layer->getChildByName("story");
 	challengebtn = (Button*)layer->getChildByName("challenge");
 	backbtn = (Button*)layer->getChildByName("back");
 
-	
+
 	//为按钮添加点击触发事件
-	storybtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::storyTouchDown,this));
+	storybtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::storyTouchDown, this));
+	backbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::backTouchDown, this));
+	challengebtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::challengeTouchDown, this));
+	//auto rootNode = CSLoader::createNode("MainScene.csb");
+	return modeSelectScene;
+}
+
+/*
+Scene *HelloWorld::popUpSetting(RenderTexture *renderTexture){
+	Scene *settingScene = Scene::create();
+	Sprite* settingSprite = Sprite::createWithTexture(renderTexture->getSprite()->getTexture());
+
+	//加载资源文件生成图层
+	LayerRGBA* layer = (LayerRGBA*)CSLoader::createNode("SettingLayer.csb");
+	//设置图层中心位置
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	CCPoint pointCenter = ccp(winSize.width / 2 - 320, winSize.height / 2 - 272);
+	settingSprite->setPosition(Point(winSize.width/2,winSize.height/2));
+	settingSprite->setFlippedY(true);
+	layer->setPosition(pointCenter);
+	settingScene->addChild(settingSprite);
+	settingSprite->addChild(layer);
+	//this->addChild(layer);
+
+	//获取图层中按钮对象
+	musiconbtn = (Button*)layer->getChildByName("musicon");
+	musicoffbtn = (Button*)layer->getChildByName("musicoff");
+	soundonbtn = (Button*)layer->getChildByName("soundon");
+	soundoffbtn = (Button*)layer->getChildByName("soundoff");
+	restartbtn = (Button*)layer->getChildByName("restartbtn");
+	backbtn = (Button*)layer->getChildByName("backbtn");
+
+	//为按钮添加点击触发事件
+	musiconbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::musiconTouchDown, this));
+	musicoffbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::musicoffTouchDown, this));
+	soundonbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::soundonTouchDown, this));
+	soundoffbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::soundoffTouchDown, this));
+	restartbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::restartTouchDown, this));
 	backbtn->addTouchEventListener(CC_CALLBACK_2(HelloWorld::backTouchDown, this));
 
-	//auto rootNode = CSLoader::createNode("MainScene.csb");
+	return settingScene;
+}**/
+
+void  HelloWorld::musiconTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:{
+														SimpleAudioEngine::sharedEngine()->rewindBackgroundMusic();
+														GameManager::getInstance()->setMusicOn(true);
+	}
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
 }
+
+void  HelloWorld::challengeTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+	switch (type)
+	{
+	case cocos2d::ui::Widget::TouchEventType::BEGAN:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::MOVED:
+		break;
+	case cocos2d::ui::Widget::TouchEventType::ENDED:
+	{
+													   
+													   SimpleAudioEngine::getInstance()->playEffect(FileUtils::getInstance()->fullPathForFilename("sound/button.wav").c_str(), false);
+													   SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Play.plist");
+
+													  
+													   string plistname = "challenge.plist";
+
+													   //载入关卡资源
+													   LoadLevelinfo::createLoadLevelinfo(plistname.c_str())->readLevelInfo();
+													   Director::getInstance()->replaceScene(TransitionFadeBL::create(0.1f, PlayLayer::createScene()));
+													   SimpleAudioEngine::getInstance()->playBackgroundMusic(FileUtils::getInstance()->fullPathForFilename("sound/block1bgm.mp3").c_str(), true);
+													   SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.1f);
+	}
+	case cocos2d::ui::Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+}
+
+	void  HelloWorld::musicoffTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+		switch (type)
+		{
+		case cocos2d::ui::Widget::TouchEventType::BEGAN:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::MOVED:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::ENDED:{
+															SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+															GameManager::getInstance()->setMusicOn(false);
+		}
+		case cocos2d::ui::Widget::TouchEventType::CANCELED:
+			break;
+		default:
+			break;
+		}
+}
+
+	
+	void  HelloWorld::soundonTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+		switch (type)
+		{
+		case cocos2d::ui::Widget::TouchEventType::BEGAN:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::MOVED:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::ENDED:{
+															
+															GameManager::getInstance()->setEffectOn(true);
+		}
+		case cocos2d::ui::Widget::TouchEventType::CANCELED:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void  HelloWorld::soundoffTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+		switch (type)
+		{
+		case cocos2d::ui::Widget::TouchEventType::BEGAN:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::MOVED:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::ENDED:{
+															
+															GameManager::getInstance()->setEffectOn(false);
+		}
+		case cocos2d::ui::Widget::TouchEventType::CANCELED:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void  HelloWorld::restartTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
+		switch (type)
+		{
+		case cocos2d::ui::Widget::TouchEventType::BEGAN:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::MOVED:
+			break;
+		case cocos2d::ui::Widget::TouchEventType::ENDED:{
+															InfoHandle handle;
+															User user = handle.getUserInfo();
+															user.setUpgradeNumber(0);
+															user.setBlockNumber(0);
+															user.setNickName("litdon");
+															user.setStarNumber(0);
+															handle.updateUserInfo(user);
+
+															for (int i = 0; i < 9;i++)
+															{
+																Block block = handle.getBlockInfo(i);
+																block.setBlockId(i);
+																block.setBlockStar(0);
+																handle.updateBlockInfo(block);
+															}
+		}
+		case cocos2d::ui::Widget::TouchEventType::CANCELED:
+			break;
+		default:
+			break;
+		}
+	}
+

@@ -12,6 +12,13 @@
 
 using namespace rapidjson;
 USING_NS_CC;
+string InfoHandle::intostr(int i){
+	char str[20];
+	sprintf(str,"%d",i);
+	string strin = str;
+	return strin;
+}
+
 User InfoHandle::getUserInfo(){
 	bool result = false;
 	User user;
@@ -37,7 +44,7 @@ User InfoHandle::getUserInfo(){
 		result = true;
 		
 				rapidjson::Value& object = array[array.Size()-1];
-				user.setNickName(object["nickName"].GetString()) ;
+				//user.setNickName(object["nickName"].GetString()) ;
 				user.setStarNumber(object["starNumber"].GetInt());
 				user.setBlockNumber(object["blockNumber"].GetInt());
 				user.setUpgradeNumber(object["upgradeNumber"].GetInt());
@@ -157,14 +164,14 @@ Tower InfoHandle::getTowerInfo(string towerName){
 		result = true;
 		rapidjson::Value&object = d[towerName.c_str()];
 		//tower.setTowerName(object["towerName"].GetString());
-		tower.setTowerInfo(object["towerInfo"].GetString());
-		tower.setTowerType(object["towerType"].GetString());
-		tower.setTowerLevel(object["towerLevel"].GetInt());
+		//tower.setTowerInfo(object["towerInfo"].GetString());
+		//tower.setTowerType(object["towerType"].GetString());
+		//tower.setTowerLevel(object["towerLevel"].GetInt());
 		tower.setDamage(object["damage"].GetDouble());
 		tower.setAttackSpeed(object["attackSpeed"].GetDouble());
 		tower.setAttackRange(object["attackRange"].GetDouble());
 		tower.setCost(object["cost"].GetInt());
-		tower.setEvolution(object["evolution"].GetString());
+		//tower.setEvolution(object["evolution"].GetString());
 		
 	}
 	return tower;
@@ -190,15 +197,15 @@ Tower InfoHandle::getTowerInfoFromBackUp(string towerName,string json){
 	{
 		result = true;
 		rapidjson::Value&object = d[towerName.c_str()];
-		tower.setTowerName(object["towerName"].GetString());
-		tower.setTowerInfo(object["towerInfo"].GetString());
-		tower.setTowerType(object["towerType"].GetString());
-		tower.setTowerLevel(object["towerLevel"].GetInt());
+		tower.setTowerName(towerName);
+		//tower.setTowerInfo(object["towerInfo"].GetString());
+		//tower.setTowerType(object["towerType"].GetString());
+		//tower.setTowerLevel(object["towerLevel"].GetInt());
 		tower.setDamage(object["damage"].GetDouble());
 		tower.setAttackSpeed(object["attackSpeed"].GetDouble());
 		tower.setAttackRange(object["attackRange"].GetDouble());
-		tower.setEvolution(object["evolution"].GetString());
-
+		//tower.setEvolution(object["evolution"].GetString());
+		tower.setCost(object["cost"].GetInt());
 	}
 	return tower;
 }
@@ -223,11 +230,11 @@ Wolf InfoHandle::getWolfInfo(string wolfName){
 	//	rapidjson::Value&array = d;   //array=d
 		
 			rapidjson::Value&object = d[wolfName.c_str()];
-			wolf.setWolfInfo(object["wolfInfo"].GetString());
-			wolf.setWolfType(object["wolfType"].GetString());
+			//wolf.setWolfInfo(object["wolfInfo"].GetString());
+			//wolf.setWolfType(object["wolfType"].GetString());
 			wolf.setMovingSpeed(object["movingSpeed"].GetDouble());
 			wolf.setWolfHealth(object["wolfHealth"].GetInt());
-			wolf.setWolfDefense(object["wolfDefense"].GetInt());
+			//wolf.setWolfDefense(object["wolfDefense"].GetInt());
 			wolf.setGold(object["gold"].GetInt());
 		
 	}
@@ -255,10 +262,10 @@ Skill InfoHandle::getSkillInfo(string skillInfo){
 		//rapidjson::Value&array = d;   //array=d
 		
 			rapidjson::Value&object = d[skillInfo.c_str()];
-			skill.setSkillInfo(object["skillInfo"].GetString());
-			skill.setSkillType(object["skillType"].GetString());
 			skill.setSkillDamage(object["skillDamage"].GetDouble());
-			skill.setSkillLevel(object["skillLevel"].GetInt());
+			skill.setSkillTime(object["time"].GetDouble());
+			skill.setSkillRange(object["range"].GetDouble());
+			skill.setSkillStrong(object["strong"].GetInt());
 		
 	}
 	return skill;
@@ -285,11 +292,13 @@ Skill InfoHandle::getSkillInfoFromBackUp(string skillInfo,string json){
 		//rapidjson::Value&array = d;   //array=d
 
 		rapidjson::Value&object = d[skillInfo.c_str()];
-		skill.setSkillInfo(object["skillInfo"].GetString());
-		skill.setSkillType(object["skillType"].GetString());
+		//skill.setSkillInfo(object["skillInfo"].GetString());
+		//skill.setSkillType(object["skillType"].GetString());
 		skill.setSkillDamage(object["skillDamage"].GetDouble());
-		skill.setSkillLevel(object["skillLevel"].GetInt());
-
+		//skill.setSkillLevel(object["skillLevel"].GetInt());
+		skill.setSkillTime(object["time"].GetDouble());
+		skill.setSkillRange(object["range"].GetDouble());
+		skill.setSkillStrong(object["strong"].GetInt());
 	}
 	return skill;
 }
@@ -394,7 +403,6 @@ void InfoHandle::updateUserInfo(User user){
 	}
 
 	//修改用户对象的属性
-	d[d.Size()-1]["nickName"].SetString(user.getNickName().c_str());
 	d[d.Size()-1]["blockNumber"].SetInt(user.getBlockNumber());
 	d[d.Size()-1]["starNumber"].SetInt(user.getStarNumber());
 	d[d.Size() - 1]["upgradeNumber"].SetInt(user.getUpgradeNumber());
@@ -503,17 +511,17 @@ void InfoHandle::updateSkillInfo(Skill skill){
 
 	string skillName = skill.getSkillName();
 	//修改相应技能对象的属性
-	d[skillName.c_str()]["skillType"].SetString(skill.getSkillType().c_str());
 	d[skillName.c_str()]["skillDamage"].SetDouble(skill.getSkillDamage());
-	d[skillName.c_str()]["skillInfo"].SetString(skill.getSkillInfo().c_str());
-	d[skillName.c_str()]["skillLevel"].SetInt(skill.getSkillLevel());
+	d[skillName.c_str()]["time"].SetDouble(skill.getSkillTime());
+	d[skillName.c_str()]["range"].SetDouble(skill.getSkillRange());
+	d[skillName.c_str()]["strong"].SetInt(skill.getSkillStrong());
 
 	//数据重新写入文件
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	d.Accept(writer);
 
-	FILE * file = fopen("skillInfo", "wb");
+	FILE * file = fopen("skillInfo.json", "wb");
 	if (file) {
 		fputs(buffer.GetString(), file);
 		fclose(file);
@@ -540,21 +548,17 @@ void InfoHandle::updateTowerInfo(Tower tower){
 
 	string towerName = tower.getTowerName();
 	//修改相应防御塔对象的属性
-	d[towerName.c_str()]["towerType"].SetString(tower.getTowerType().c_str());
 	d[towerName.c_str()]["damage"].SetDouble(tower.getDamage());
-	d[towerName.c_str()]["towerInfo"].SetString(tower.getTowerInfo().c_str());
-	d[towerName.c_str()]["towerLevel"].SetInt(tower.getTowerLevel());
 	d[towerName.c_str()]["attackSpeed"].SetDouble(tower.getAttackSpeed());
 	d[towerName.c_str()]["attackRange"].SetDouble(tower.getAttackRange());
 	d[towerName.c_str()]["cost"].SetInt(tower.getCost());
-	d[towerName.c_str()]["evolution"].SetString(tower.getEvolution().c_str());
-
+	
 	//数据重新写入文件
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	d.Accept(writer);
 
-	FILE * file = fopen("towerInfo", "wb");
+	FILE * file = fopen("towerInfo.json", "wb");
 	if (file) {
 		fputs(buffer.GetString(), file);
 		fclose(file);
@@ -562,7 +566,7 @@ void InfoHandle::updateTowerInfo(Tower tower){
 	CCLOG("%s", buffer.GetString());
 }
 
-void InfoHandle::updateTowerInfoByProperty(string towername,string propertytype ,float value){
+void InfoHandle::updateTowerInfoByProperty(string towername,string propertytype ,double value){
 	//读取json文件内容
 	std::string str = FileUtils::getInstance()->getStringFromFile("towerInfo.json");
 
@@ -588,7 +592,7 @@ void InfoHandle::updateTowerInfoByProperty(string towername,string propertytype 
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	d.Accept(writer);
 
-	FILE * file = fopen("towerInfo", "wb");
+	FILE * file = fopen("towerInfo.json", "wb");
 	if (file) {
 		fputs(buffer.GetString(), file);
 		fclose(file);
@@ -622,7 +626,7 @@ void InfoHandle::updateSkillInfoByProperty(string skillname,string propertyname,
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 	d.Accept(writer);
 
-	FILE * file = fopen("skillInfo", "wb");
+	FILE * file = fopen("skillInfo.json", "wb");
 	if (file) {
 		fputs(buffer.GetString(), file);
 		fclose(file);

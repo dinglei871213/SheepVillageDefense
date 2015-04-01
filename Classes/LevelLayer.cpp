@@ -44,7 +44,9 @@ bool LevelLayer::init()
 void LevelLayer::addNode(Node* level){
 	if (level)
 	{
-		level->setContentSize(Size::Size(WINDOW_WIDTH, WINDOW_HEIGHT));
+		Size *s=new Size();
+		s->setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		level->setContentSize(*s);
 		level->setPosition(Vec2(WINDOW_WIDTH * pageNode, 0));
 		this->addChild(level);
 		pageNode++;

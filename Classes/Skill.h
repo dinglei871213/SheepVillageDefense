@@ -46,11 +46,32 @@ public:
 	string getSkillInfo(){
 		return this->skillInfo;
 	}
+	void setSkillTime(double time){
+		this->skillTime = time;
+	}
+	double getSkillTime(){
+		return this->skillTime;
+	}
 
+	void setSkillRange(double range){
+		this->skillRange = range;
+	}
+	double getSkillRange(){
+		return this->skillRange;
+	}
+	void setSkillStrong(int strong){
+		this->skillStrong = strong;
+	}
+	int getSkillStrong(){
+		return this->getSkillStrong();
+	}
 private:
 	string skillName;		//技能的名称
 	string skillType;		//技能的类型
 	double skillDamage;		//技能的伤害
+	double skillTime;
+	double skillRange;
+	int skillStrong;
 	int skillLevel;			//技能的等级
 	string skillInfo;		//技能的说明信息
 };

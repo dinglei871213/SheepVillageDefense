@@ -7,7 +7,6 @@
 #include "SimpleAudioEngine.h"
 #include "BlockScene.h"
 #include "PlayLayer.h"
-#include "GameManager.h"
 
 USING_NS_CC;
 
@@ -21,28 +20,27 @@ public:
 	~PlaySetting();
 
 	void setListener();
+	void setMenu();
 	virtual bool onTouchBegan(Touch *touch, Event *event) override;
 	static Scene* createSettingScene(RenderTexture *renderTexture);
 	CREATE_FUNC(PlaySetting);
 	void musicAddEffectButton();
 	void onValueChange(Ref* psender, Control::EventType event);
+	void resumeCallback(Ref* pSender);
+	void quitCallback(Ref* pSender);
+	void restartCallback(Ref* pSender);
 	Sprite *settingSprite;
 	Sprite *resumeBtn;
 	Sprite *quitBtn;
 	Sprite *restartBtn;
 	CCLabelTTF *musicLabel;
-	Sprite *musicOnBg;
-	Sprite *musicOnBtn;
-	Sprite *musicOffBg;
-	Sprite *musicOffBtn;
+	Sprite *musicBtn;
 	CCLabelTTF *effectLabel;
-	Sprite *effectOnBg;
-	Sprite *effectOnBtn;
-	Sprite *effectOffBg;
-	Sprite *effectOffBtn;
+	Sprite *effectBtn;
 	bool musicOn;
-	bool effectOn;
 	GameManager *instance;
+	Sprite *musicText;
+	Sprite *effectText;
 };
 
 #endif /* defined(__SheepVillageDefense__PlaySetting__) */

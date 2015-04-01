@@ -49,7 +49,6 @@ public:
 	void checkBullet();
 	void addEvolveTowerChoosePanel(Point point, TowerBase* tower);
 
-
 	void startGame();
 	int MatrixIndex;
 	//Vector<TMXObjectGroup*> mapobject[5];
@@ -135,8 +134,7 @@ private:
 	Sprite* speedBtn;
 	bool isSpeeding;
 	Sprite *settingBtn;
-
-	Sprite* startBtn;
+	Sprite * startBtn;
 	bool isStart;
 };
 

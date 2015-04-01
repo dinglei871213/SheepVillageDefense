@@ -25,7 +25,8 @@ int BlockScene::starnum = 0;
 Vector<Button*> BlockScene::btnlist[9] = {};
 Vector<Sprite*> BlockScene::splist[9] = {};
 Vector<Text*>	BlockScene::textlist[9] = {};
-Vector<Button*> BlockScene::towerlibbtn[6] = {};
+Vector<Button*> BlockScene::towerlibbtn[8] = {};
+Vector<Button*> BlockScene::wolflibbtn[6] = {};
 
 Button* BlockScene::block1btn	= new Button();
 Button* BlockScene::block2btn	= new Button();
@@ -36,16 +37,6 @@ Button* BlockScene::block6btn	= new Button();
 Button* BlockScene::block7btn	= new Button();
 Button* BlockScene::block8btn	= new Button();
 Button* BlockScene::block9btn	= new Button();
-
-Sprite* BlockScene::sp1 = new Sprite();
-Sprite* BlockScene::sp2 = new Sprite();
-Sprite* BlockScene::sp3 = new Sprite();
-Sprite* BlockScene::sp4 = new Sprite();
-Sprite* BlockScene::sp5 = new Sprite();
-Sprite* BlockScene::sp6 = new Sprite();
-Sprite* BlockScene::sp7 = new Sprite();
-Sprite* BlockScene::sp8 = new Sprite();
-Sprite* BlockScene::sp9 = new Sprite();
 
 Text* BlockScene::text1 = new Text();
 Text* BlockScene::text2 = new Text();
@@ -64,7 +55,6 @@ Button* BlockScene::backbtn		= new Button();
 
 Button* BlockScene::fightbtn	= new Button();
 Button* BlockScene::closebtn	= new Button();
-Sprite* BlockScene::suolue		= new Sprite();
 Text* BlockScene::blocktitle	= new Text();
 Text* BlockScene::blockinfo		= new Text();
 Text* BlockScene::blockid		= new Text();
@@ -84,13 +74,26 @@ Button* BlockScene::tower3btn = new Button();
 Button* BlockScene::tower4btn = new Button();
 Button* BlockScene::tower5btn = new Button();
 Button* BlockScene::tower6btn = new Button();
-Sprite*	BlockScene::towersprite = new Sprite();
+Button* BlockScene::tower7btn = new Button();
+Button* BlockScene::tower8btn = new Button();
 Text*	BlockScene::towername = new Text();
 Text*	BlockScene::towerinfo = new Text();
 Text*	BlockScene::damage = new Text();
 Text*	BlockScene::speed = new Text();
 Text*	BlockScene::range = new Text();
 Text*	BlockScene::specialtext = new Text();
+
+Button* BlockScene::wolf1btn = new Button();
+Button* BlockScene::wolf2btn = new Button();
+Button* BlockScene::wolf3btn = new Button();
+Button* BlockScene::wolf4btn = new Button();
+Button* BlockScene::wolf5btn = new Button();
+Button* BlockScene::wolf6btn = new Button();
+Text*	BlockScene::wolfname = new Text();
+Text*	BlockScene::wolfinfo = new Text();
+Text*	BlockScene::health = new Text();
+Text*	BlockScene::movingspeed = new Text();
+
 
 Vector<Button*> BlockScene::uBtnlist[28] = {};
 Button* BlockScene::uBtn1 = new Button();
@@ -127,7 +130,6 @@ Text* BlockScene::stars = new Text();
 Button* BlockScene::reset = new Button();
 Button* BlockScene::confirm = new Button();
 Button* BlockScene::upgrade = new Button();
-Sprite*	BlockScene::btnImage = new Sprite();
 Text*	BlockScene::singleStar = new Text();
 Text* BlockScene::nameText = new Text();
 Text* BlockScene::infoText = new Text();
@@ -168,7 +170,6 @@ bool BlockScene::init()
 	upgradebtn = (Button*)rootNode->getChildByName("upgrade");
 	backbtn = (Button*)rootNode->getChildByName("backtomenu");
 	auto blocknode = rootNode->getChildByName("blocknode");//blocknode为众小关卡所在的父节点
-	this->addChild(blocknode);
 	block1btn = (Button*)blocknode->getChildByName("b1");
 	block2btn = (Button*)blocknode->getChildByName("b2");
 	block3btn = (Button*)blocknode->getChildByName("b3");
@@ -297,7 +298,7 @@ bool BlockScene::init()
 	startext->setText("/"+b);
 
 	//实例化多重图层对象
-	multilayer = new LayerMultiplex();
+	multilayer =LayerMultiplex::create();
 	this->addChild(multilayer);
 
 	
@@ -400,10 +401,11 @@ Layer* BlockScene::popTower(){
 	tower4btn = (Button*)towerlayer->getChildByName("tower4");
 	tower5btn = (Button*)towerlayer->getChildByName("tower5");
 	tower6btn = (Button*)towerlayer->getChildByName("tower6");
+	tower7btn = (Button*)towerlayer->getChildByName("tower7");
+	tower8btn = (Button*)towerlayer->getChildByName("tower8");
 
 	backbtn	= (Button*)towerlayer->getChildByName("back");
 	closebtn = (Button*)towerlayer->getChildByName("close");
-	towersprite = (Sprite*)towerlayer->getChildByName("towersprite");
 	towername = (Text*)towerlayer->getChildByName("towernametext");
 	towerinfo = (Text*)towerlayer->getChildByName("towerinfotext");
 	damage = (Text*)towerlayer->getChildByName("damagetext");
@@ -424,8 +426,10 @@ Layer* BlockScene::popTower(){
 	towerlibbtn->insert(3, tower4btn);
 	towerlibbtn->insert(4, tower5btn);
 	towerlibbtn->insert(5, tower6btn);
+	towerlibbtn->insert(6, tower7btn);
+	towerlibbtn->insert(7, tower8btn);
 	//为按钮添加点击触发事件
-	for (int i = 0; i < 6;i++)
+	for (int i = 0; i < 8;i++)
 	{
 		towerlibbtn->at(i)->addTouchEventListener(CC_CALLBACK_2(BlockScene::certaintowerTouchDown,this,i));
 	}
@@ -433,6 +437,57 @@ Layer* BlockScene::popTower(){
 	backbtn->addTouchEventListener(CC_CALLBACK_2(BlockScene::leaveTouchDown, this));
 
 	return towerlayer;
+
+}
+
+Layer* BlockScene::popWolf(){
+
+	//加载资源文件生成图层
+	Layer* wolflayer = (Layer*)CSLoader::createNode("WolfLibraryLayer.csb");
+
+	//设置图层中心位置
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	CCPoint pointCenter = ccp(winSize.width / 2 - 320, winSize.height / 2 - 240);
+	wolflayer->setPosition(pointCenter);
+
+	//获取图层中按钮对象
+	wolf1btn = (Button*)wolflayer->getChildByName("wolf1");
+	wolf2btn = (Button*)wolflayer->getChildByName("wolf2");
+	wolf3btn = (Button*)wolflayer->getChildByName("wolf3");
+	wolf4btn = (Button*)wolflayer->getChildByName("wolf4");
+	wolf5btn = (Button*)wolflayer->getChildByName("wolf5");
+	wolf6btn = (Button*)wolflayer->getChildByName("wolf6");
+
+	backbtn = (Button*)wolflayer->getChildByName("back");
+	closebtn = (Button*)wolflayer->getChildByName("close");
+	wolfname = (Text*)wolflayer->getChildByName("wolfnametext");
+	wolfinfo = (Text*)wolflayer->getChildByName("wolfinfotext");
+	health = (Text*)wolflayer->getChildByName("healthtext");
+	movingspeed = (Text*)wolflayer->getChildByName("movingspeedtext");
+	
+
+	//将防御塔资料按钮加到Vector中
+	//如果Vector不为空，进行清空处理
+	if (!wolflibbtn->empty())
+	{
+		wolflibbtn->clear();
+	}
+
+	wolflibbtn->insert(0, wolf1btn);
+	wolflibbtn->insert(1, wolf2btn);
+	wolflibbtn->insert(2, wolf3btn);
+	wolflibbtn->insert(3, wolf4btn);
+	wolflibbtn->insert(4, wolf5btn);
+	wolflibbtn->insert(5, wolf6btn);
+	//为按钮添加点击触发事件
+	for (int i = 0; i < 6; i++)
+	{
+		wolflibbtn->at(i)->addTouchEventListener(CC_CALLBACK_2(BlockScene::certainwolfTouchDown, this, i));
+	}
+	closebtn->addTouchEventListener(CC_CALLBACK_2(BlockScene::closeTouchDown, this));
+	backbtn->addTouchEventListener(CC_CALLBACK_2(BlockScene::leaveTouchDown, this));
+
+	return wolflayer;
 
 }
 
@@ -683,14 +738,7 @@ void BlockScene::upTouchDown(Control::Ref* pSender, Widget::TouchEventType type,
 void  BlockScene::resetTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
 	Layer* uglayer = popUpgrade();
 	InfoHandle handle;
-	for (int i = 0; i < 28; i++){
-		char sp[10];
-		sprintf(sp, "%d", i + 1);
-		string t = sp;
-		string btn = "btn" + t;
-		handle.updateUpMark(btn, false);
-
-	}
+	
 	
 	switch (type)
 	{
@@ -699,6 +747,17 @@ void  BlockScene::resetTouchDown(Control::Ref* pSender, Widget::TouchEventType t
 	case Widget::TouchEventType::MOVED:
 		break;
 	case Widget::TouchEventType::ENDED:{
+										   for (int i = 0; i < 28; i++){
+											   char sp[10];
+											   sprintf(sp, "%d", i + 1);
+											   string t = sp;
+											   string btn = "btn" + t;
+											   btnState[i] = false;
+											   string picname = "uu" + t + ".png";
+											   uBtnlist->at(i)->loadTextures(picname,picname,picname);
+											   handle.updateUpMark(btn, false);
+
+										   }
 	string tstype[7] = { "arrowtower", "slowtower", "poisontower", "turrettower", "ice", "wind", "fire" };
 	for (int i = 0; i < 4;i++)
 	{
@@ -738,7 +797,7 @@ void  BlockScene::upgradeTouchDown(Control::Ref* pSender, Widget::TouchEventType
 	switch (type)
 	{
 	case Widget::TouchEventType::BEGAN:
-
+		break;
 	case Widget::TouchEventType::MOVED:
 		break;
 	case Widget::TouchEventType::ENDED:
@@ -773,7 +832,44 @@ void BlockScene::certainblockTouchDown(Control::Ref* pSender, Widget::TouchEvent
 		break;
 	}
 }
-
+//小狼按钮的按下批处理响应事件
+void BlockScene::certainwolfTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i){
+	//跳转至相应图层
+	//获得资料库图层对象
+	Layer* wolflayer = popWolf();
+	//根据按下类型进行响应
+	switch (type)
+	{
+	case Widget::TouchEventType::BEGAN:
+		break;
+	case Widget::TouchEventType::MOVED:
+		break;
+	case Widget::TouchEventType::ENDED:
+	{
+										  //从plist文件中读取资料相关的中文字符									 
+										  CCDictionary* plistDic = CCDictionary::createWithContentsOfFile("wolflib.plist");
+										  InfoHandle handle;
+										  string wstr = handle.intostr(i + 1);
+										  CCString* wname = (CCString *)plistDic->objectForKey("wolf" + wstr + "name");
+										  CCString* winfo = (CCString *)plistDic->objectForKey("wolf" + wstr + "info");
+										  CCString* whealth = (CCString *)plistDic->objectForKey("health"+wstr);
+										  CCString* wmovingspeed = (CCString *)plistDic->objectForKey("movingspeed"+wstr);
+										 
+										  wolfname->setText(wname->getCString());
+										  wolfinfo->setText(winfo->getCString());
+										  health->setText(whealth->getCString());
+										  movingspeed->setText(wmovingspeed->getCString());
+										  
+										  multilayer->addLayer(wolflayer);		//将资料库层对象添加至多重图层管理器
+										  layernum++;							//图层数量加一
+										  multilayer->switchTo(layernum - 1);	//跳转至新图层
+	}
+	case Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
+}
 
 //防御塔按钮的按下批处理响应事件
 void BlockScene::certaintowerTouchDown(Control::Ref* pSender, Widget::TouchEventType type, int i){
@@ -790,7 +886,7 @@ void BlockScene::certaintowerTouchDown(Control::Ref* pSender, Widget::TouchEvent
 	case Widget::TouchEventType::ENDED:
 	{
 	//从plist文件中读取资料相关的中文字符									 
-	CCDictionary* plistDic = CCDictionary::createWithContentsOfFile("chinese.plist");
+	CCDictionary* plistDic = CCDictionary::createWithContentsOfFile("towerlib.plist");
 	char tn[10];
 	sprintf(tn,"%d",i+1);
 	string tstr = tn;
@@ -802,7 +898,6 @@ void BlockScene::certaintowerTouchDown(Control::Ref* pSender, Widget::TouchEvent
 	CCString* tspecial	= (CCString *)plistDic->objectForKey("tower" + tstr + "special");
 
 
-	towersprite->setTexture("towerpic"+tstr+".png");
 	towername->setText(tname->getCString());
 	towerinfo->setText(tinfo->getCString());
 	damage->setText(tdamage->getCString());
@@ -869,25 +964,17 @@ void BlockScene::fightTouchDown(Control::Ref* pSender, Widget::TouchEventType ty
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Play.plist");
 
 	//获取对应待加载的关卡plist资源文件
-	char fn[10];
-	sprintf(fn, "%d", i );
-	string fid = fn;
-	string fileName = "levelInfo_"+fid+".plist";
-	
-	//添加当前关卡和下一关的文件标记到UserDefault
-	char fnext[10];
-	sprintf(fnext, "%d", i + 1);
-	string fnid = fnext;
-	string nextfileName = "levelInfo_" + fnid + ".plist";
-
-	
+	InfoHandle handle;
+	string fileName = "levelInfo_"+handle.intostr(i)+".plist";
+	string bgmMusic = "block1bgm.mp3";
+	//添加当前关卡标记
 	UserDefault::getInstance()->setIntegerForKey("currBlock", i);
-	UserDefault::getInstance()->setStringForKey("currLevelFile", fileName);
-	UserDefault::getInstance()->setStringForKey("nextLevelFile", nextfileName);
-
+	GameManager::getInstance()->clear();
 	//载入关卡资源
 	LoadLevelinfo::createLoadLevelinfo(fileName.c_str())->readLevelInfo();
 	Director::getInstance()->replaceScene(TransitionFadeBL::create(0.1f, PlayLayer::createScene()));
+	SimpleAudioEngine::getInstance()->playBackgroundMusic(FileUtils::getInstance()->fullPathForFilename("sound/"+bgmMusic).c_str(), true);
+	SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(0.1f);
 	}
 	case cocos2d::ui::Widget::TouchEventType::CANCELED:
 		break;
@@ -907,7 +994,24 @@ void BlockScene::closeTouchDown(Control::Ref* pSender, Widget::TouchEventType ty
 
 void  BlockScene::wolfTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
 	//跳转至相应图层
-	
+	//跳转至相应图层
+	Layer* wolflayer;
+	switch (type)
+	{
+	case Widget::TouchEventType::BEGAN:
+		break;
+	case Widget::TouchEventType::MOVED:
+		break;
+	case Widget::TouchEventType::ENDED:
+		wolflayer= popWolf();
+		multilayer->addLayer(wolflayer);
+		layernum++;
+		multilayer->switchTo(layernum - 1);
+	case Widget::TouchEventType::CANCELED:
+		break;
+	default:
+		break;
+	}
 	
 }
 void  BlockScene::towerTouchDown(Control::Ref* pSender, Widget::TouchEventType type){
